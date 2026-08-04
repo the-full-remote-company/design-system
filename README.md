@@ -11,10 +11,18 @@ the same time, without either one dragging on the other.
                         └── themes/finance.css  ← the first product theme.
 ```
 
-Read **`STATE.md`** for what's actually shipped right now. Read
-**`ARCHITECTURE.md`** for why it's shaped this way. Read **`AGENTS.md`**
-before changing anything — it's written for whoever (or whatever) touches
-this repo next, including a future instance of the tool that built v1.
+Read **`.specify/memory/constitution.md`** first — the nine non-negotiable
+articles this repo follows. Then **`STATE.md`** for what's actually
+shipped right now, **`ARCHITECTURE.md`** for why it's shaped this way, and
+**`AGENTS.md`** before changing anything — it's written for whoever (or
+whatever) touches this repo next, including a future instance of the tool
+that built v1.
+
+This repo follows GitHub's [Spec-Driven Development](https://github.com/github/spec-kit)
+methodology (see `decisions/0006.md`). New features go through
+`specs/00N-feature-name/` using the templates in `.specify/templates/`;
+`specs/001-design-system-foundation/` is v1 retrofitted into that shape
+as a worked example.
 
 ## Packages
 
@@ -44,5 +52,6 @@ hard to accidentally violate. See `AGENTS.md` for the full rule set.
 
 ## Status
 
-v1.0.0 — initial release. See `STATE.md` for exactly what's in and what's
-deliberately deferred to v1.1.
+v1.1.0 — Spec-Driven Development conventions adopted on top of the v1.0.0
+package release. See `STATE.md` for exactly what's in and what's
+deliberately deferred to v1.2.

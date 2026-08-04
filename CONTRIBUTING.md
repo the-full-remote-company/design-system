@@ -5,11 +5,27 @@ repo — where they differ, it's called out.
 
 ## Before you start
 
-1. Read `STATE.md`, then the newest 3 files in `decisions/`, then
-   `packages/foundation/CONTRACT.md`. This order is not optional — see
-   `AGENTS.md` for why.
+1. Read `.specify/memory/constitution.md`, then `STATE.md`, then the
+   newest 3 files in `decisions/`, then `packages/foundation/CONTRACT.md`.
+   This order is not optional — see `AGENTS.md` for why.
 2. Run `node scripts/check-contract.js` and `node scripts/lint-boundaries.js`
    to confirm the repo is currently valid.
+
+## New feature? Spec it first.
+
+This repo follows Spec-Driven Development
+(`decisions/0006-adopting-spec-driven-development.md`). Any change bigger
+than a token tweak or a bug fix — a new product theme, a new shared
+component, anything with its own design tradeoffs — starts as
+`specs/00N-feature-name/spec.md`, using `.specify/templates/spec-template.md`.
+Then `plan.md` (with a Constitution Check against Articles VII–IX), then
+`tasks.md`. `specs/001-design-system-foundation/` is v1 retrofitted into
+this shape — read it as the worked example. See `.specify/README.md` for
+how to run this workflow without the `specify` CLI installed.
+
+A small fix — a bug in a token value, a typo, a missing state on an
+existing component — does not need a spec. Use judgment: if you'd
+naturally write an ADR for it per the table below, it's spec-sized.
 
 ## Making a change
 

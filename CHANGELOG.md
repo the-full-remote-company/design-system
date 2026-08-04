@@ -4,6 +4,25 @@ All notable changes to this repo. Each package also carries its own
 version in `package.json` and in `STATE.md`; this file is the human-
 readable narrative across all of them.
 
+## 1.1.0 — 2026-08-04
+
+Adopted GitHub Spec Kit's Spec-Driven Development conventions on top of
+the v1.0.0 packages. No package code changed — this is governance and
+process, not a functional release.
+
+- **Added** `.specify/memory/constitution.md` — nine articles, adapted
+  for a design-system domain, supreme over `AGENTS.md`/`CONTRIBUTING.md`.
+- **Added** `.specify/templates/{spec,plan,tasks,checklist}-template.md`
+  for all future feature work.
+- **Added** `specs/001-design-system-foundation/` — v1 retrofitted into
+  spec/plan/tasks/checklist form, serving as both historical record and
+  worked example.
+- **Added** `decisions/0006-adopting-spec-driven-development.md`,
+  documenting the adoption and its honest adaptations (no CLI access;
+  nine articles translated for a CSS/token domain rather than a backend).
+- **Updated** `AGENTS.md`, `CONTRIBUTING.md`, `README.md`, `STATE.md` to
+  reference and defer to the constitution.
+
 ## 1.0.0 — 2026-08-04
 
 Initial release.

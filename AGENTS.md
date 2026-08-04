@@ -5,15 +5,33 @@ is normative: if a proposed change conflicts with something below, the
 change is wrong, not this file, until an ADR (see `decisions/`) formally
 supersedes the rule.
 
+**This file sits below `.specify/memory/constitution.md` in authority.**
+This repo follows GitHub's Spec-Driven Development methodology (see
+`decisions/0006-adopting-spec-driven-development.md`); the constitution's
+nine articles are the non-negotiable layer, and this file is the
+operational detail underneath it. If anything here ever conflicts with
+the constitution, the constitution wins and this file has a bug.
+
 ## Read in this order, every time, before touching anything
 
-1. **`STATE.md`** — what exists right now, in machine-readable form.
-2. **`decisions/`** — the last 3–5 ADRs, newest first. These are *why*
+1. **`.specify/memory/constitution.md`** — the nine articles. The
+   non-negotiable layer everything else sits under.
+2. **`STATE.md`** — what exists right now, in machine-readable form.
+3. **`decisions/`** — the last 3–5 ADRs, newest first. These are *why*
    things are the way they are. STATE.md tells you *what*; ADRs tell you
    *why*, and why matters more when you're deciding whether to change it.
-3. **`packages/foundation/CONTRACT.md`** — the token contract. Read this
+4. **`packages/foundation/CONTRACT.md`** — the token contract. Read this
    before adding or touching any token, in any package.
-4. Only then, the code.
+5. Only then, the code.
+
+## Building a new feature? Use the spec workflow, not ad-hoc changes
+
+Any new product theme, new shared component, or anything that would
+need its own `plan.md`-level Constitution Check goes through
+`specs/00N-feature-name/` — copy the templates in `.specify/templates/`.
+`specs/001-design-system-foundation/` is the worked example (v1,
+retrofitted). See `.specify/README.md` for how to run this without the
+`specify` CLI installed.
 
 Skipping this order is how an agent re-derives a decision that was already
 made and rejected two months ago, or re-opens a debate the prior agent
@@ -109,6 +127,7 @@ agent will trust it.
 
 Run this checklist before writing any code:
 
+- [ ] Read `.specify/memory/constitution.md`.
 - [ ] Read `STATE.md`.
 - [ ] Read the 3 most recent files in `decisions/`, sorted by number.
 - [ ] Read `packages/foundation/CONTRACT.md`.

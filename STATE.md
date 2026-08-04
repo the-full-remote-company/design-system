@@ -10,9 +10,19 @@ same commit. This file drifting out of sync with reality is the single
 fastest way this repo becomes unmaintainable for the next agent.
 
 ```yaml
-repo_version: 1.0.0
+repo_version: 1.1.0
 last_updated: 2026-08-04
-status: v1 initial release
+status: v1.0.0 packages unchanged; Spec-Driven Development conventions
+        adopted on top (constitution + specs/ workflow). See decisions/0006.md.
+
+spec_driven_development:
+  adopted: true
+  constitution_version: 1.0.0
+  constitution_path: .specify/memory/constitution.md
+  specs_retrofitted: [001-design-system-foundation]
+  cli_actually_run: false   # no network access when this was built — see
+                             # .specify/README.md before running the real
+                             # `specify` CLI against this repo
 
 packages:
   "@tfrc/foundation": 1.0.0
@@ -49,7 +59,7 @@ product_hues_in_use:            # portfolio product spectrum — @tfrc/app only.
 themes_shipped_on_app_layer:
   - finance    # packages/app/src/themes/finance.css — the only theme so far.
 
-known_gaps_for_v1.1:            # intentionally out of scope for v1, not
+known_gaps_for_v1.2:             # intentionally out of scope, not
                                  # forgotten. Don't silently re-decide these —
                                  # open an ADR first if you're tackling one.
   - no icon set yet (foundation/src/icons/ does not exist)
@@ -59,4 +69,10 @@ known_gaps_for_v1.1:            # intentionally out of scope for v1, not
     repo has never left this container with node_modules present)
   - no visual regression / contrast CI check, only static grep-based lint
   - no real estate theme yet (packages/app/src/themes/estate.css does not exist)
+  - the actual `specify` CLI has never been run against this repo (no
+    network access when it was built) — .specify/ was hand-authored to
+    match documented conventions; see .specify/README.md before running
+    the real CLI, especially regarding memory/constitution.md
+  - only specs/001 exists; no new feature has gone through the spec
+    workflow yet to prove the templates hold up in practice
 ```
