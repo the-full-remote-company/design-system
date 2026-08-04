@@ -1,0 +1,12 @@
+{
+  "name": "tfrc-design-system",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The Full Remote Company — design system monorepo. Foundation, web (corporate), app (product, themed per product).",
+  "workspaces": ["packages/*", "apps/*"],
+  "scripts": {
+    "check:contract": "node scripts/check-contract.js",
+    "lint:boundaries": "node scripts/lint-boundaries.js",
+    "verify": "npm run check:contract && npm run lint:boundaries"
+  }
+}

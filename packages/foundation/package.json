@@ -1,0 +1,12 @@
+{
+  "name": "@tfrc/foundation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Color ramps, spacing base, reset, and the token contract. No user-facing components. Consumed by @tfrc/web and @tfrc/app — never the other way around.",
+  "main": "src/index.css",
+  "exports": {
+    ".": "./src/index.css",
+    "./palettes/*": "./src/palettes/*.css"
+  },
+  "files": ["src", "CONTRACT.md"]
+}

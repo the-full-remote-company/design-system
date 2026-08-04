@@ -1,0 +1,11 @@
+/* ==========================================================================
+   @tfrc/app — entry point
+   Import order: foundation (ramps + reset) -> tokens (semantic layer) ->
+   components. A product theme (see src/themes/) imports THIS file first,
+   then layers its own overrides on top. Never import anything from
+   @tfrc/web — see AGENTS.md rule 3 and scripts/lint-boundaries.js.
+   ========================================================================== */
+
+@import "@tfrc/foundation";
+@import "./tokens.css";
+@import "./components.css";

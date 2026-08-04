@@ -1,0 +1,41 @@
+/* ==========================================================================
+   @tfrc/app/themes/finance — the first product theme
+   Themes over @tfrc/app; does not fork it. See decisions/0001.md — "one
+   product system, not one per product" — this file is the proof of that
+   principle, not an exception to it.
+
+   For v1, the finance theme needs no token overrides: the base @tfrc/app
+   semantic layer already IS the finance-appropriate one (reserved gain/
+   loss, tabular numerals, 44px touch floor). This file exists so future
+   product themes have a real example to follow, and so finance-specific
+   additions have an obvious home instead of leaking into @tfrc/app itself.
+   ========================================================================== */
+
+@import "@tfrc/app";
+
+:root {
+  /* This theme's identity within the product spectrum. See
+     decisions/0005-product-spectrum-hue-ceiling.md before reusing this
+     hue elsewhere, and before adding a new product theme. */
+  --theme-product-hue: var(--product-capital);
+  --theme-product-hue-tint: var(--color-accent-bg);
+}
+
+/* Finance-specific composition, not present in base @tfrc/app: a labeled
+   accent strip for surfaces that need to say "this is the finance
+   product" inside a cross-product shell (e.g. a unified dashboard). */
+.theme-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: var(--step-xs);
+  font-weight: 600;
+  color: var(--theme-product-hue);
+}
+.theme-tag::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: var(--theme-product-hue);
+}

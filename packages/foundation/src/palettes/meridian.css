@@ -1,0 +1,69 @@
+/* ==========================================================================
+   MERIDIAN — the v1 shipped palette. See decisions/0003.md for why.
+
+   Three ramps. Components in @tfrc/web and @tfrc/app never reference these
+   variables directly — only through each package's own semantic tokens/
+   tokens.css, per decisions/0004.md. This file's only job is to define the
+   raw color material.
+   ========================================================================== */
+
+:root {
+  /* neutral — cool slate, tuned for dense financial tables */
+  --ramp-neutral-50:  oklch(0.980 0.004 270);
+  --ramp-neutral-100: oklch(0.950 0.007 270);
+  --ramp-neutral-200: oklch(0.896 0.012 270);
+  --ramp-neutral-300: oklch(0.798 0.018 270);
+  --ramp-neutral-400: oklch(0.668 0.024 270);
+  --ramp-neutral-500: oklch(0.558 0.028 270);
+  --ramp-neutral-600: oklch(0.458 0.032 270);
+  --ramp-neutral-700: oklch(0.362 0.034 270);
+  --ramp-neutral-800: oklch(0.282 0.032 270);
+  --ramp-neutral-900: oklch(0.220 0.028 270);
+  --ramp-neutral-950: oklch(0.166 0.024 270);
+
+  /* brand — indigo. The parent brand accent. See decisions/0002.md for
+     why hue 275 (clear of both reserved gain/loss bands). */
+  --ramp-brand-50:  oklch(0.978 0.014 275);
+  --ramp-brand-100: oklch(0.946 0.034 275);
+  --ramp-brand-200: oklch(0.896 0.062 275);
+  --ramp-brand-300: oklch(0.820 0.100 275);
+  --ramp-brand-400: oklch(0.700 0.150 275);
+  --ramp-brand-500: oklch(0.600 0.180 275);
+  --ramp-brand-600: oklch(0.520 0.190 275);
+  --ramp-brand-700: oklch(0.440 0.168 275);
+  --ramp-brand-800: oklch(0.360 0.132 275);
+  --ramp-brand-900: oklch(0.290 0.098 275);
+
+  /* support — gold. The property/real-estate association. */
+  --ramp-support-50:  oklch(0.978 0.018 68);
+  --ramp-support-100: oklch(0.950 0.042 68);
+  --ramp-support-200: oklch(0.902 0.078 67);
+  --ramp-support-300: oklch(0.848 0.108 66);
+  --ramp-support-400: oklch(0.762 0.130 65);
+  --ramp-support-500: oklch(0.680 0.140 65);
+  --ramp-support-600: oklch(0.590 0.130 64);
+  --ramp-support-700: oklch(0.490 0.108 62);
+  --ramp-support-800: oklch(0.398 0.086 60);
+  --ramp-support-900: oklch(0.320 0.068 58);
+
+  /* Reserved market-direction colors. @tfrc/app only — never @tfrc/web.
+     See decisions/0002-reserved-hues-for-financial-semantics.md. */
+  --color-gain:      oklch(0.510 0.120 150);
+  --color-gain-tint: oklch(0.945 0.045 150);
+  --color-loss:      oklch(0.530 0.190 25);
+  --color-loss-tint: oklch(0.940 0.040 25);
+
+  /* Product spectrum — @tfrc/app only. Constant L/C, hue varies.
+     See decisions/0005-product-spectrum-hue-ceiling.md before adding one. */
+  --product-capital: oklch(0.545 0.185 275);
+  --product-estate:  oklch(0.590 0.130 65);
+  --product-lending: oklch(0.545 0.100 195);
+  --product-insight: oklch(0.560 0.150 235);
+  --product-legal:   oklch(0.545 0.200 305);
+  --product-market:  oklch(0.560 0.185 340);
+}
+
+.dark {
+  /* Ramps don't change in dark mode — only the semantic layer in each
+     consuming package's tokens.css does. Nothing to override here. */
+}

@@ -1,0 +1,8 @@
+/* ==========================================================================
+   @tfrc/foundation — entry point
+   Imports the ACTIVE palette (see STATE.md), then the base layer.
+   Consuming packages import this, then define their own tokens.css on top.
+   ========================================================================== */
+
+@import "./palettes/meridian.css";
+@import "./base.css";

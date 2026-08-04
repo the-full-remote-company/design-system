@@ -1,0 +1,18 @@
+name: verify
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  contract-and-boundaries:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Check token contract
+        run: node scripts/check-contract.js
+      - name: Lint package boundaries
+        run: node scripts/lint-boundaries.js

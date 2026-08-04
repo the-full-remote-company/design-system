@@ -1,0 +1,10 @@
+/* ==========================================================================
+   @tfrc/web — entry point
+   Import order matters: foundation (ramps + reset) -> tokens (semantic
+   layer) -> components. Never import anything from @tfrc/app — see
+   AGENTS.md rule 3 and scripts/lint-boundaries.js.
+   ========================================================================== */
+
+@import "@tfrc/foundation";
+@import "./tokens.css";
+@import "./components.css";

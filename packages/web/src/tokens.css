@@ -1,0 +1,76 @@
+/* ==========================================================================
+   @tfrc/web — semantic tokens
+   Same token NAMES as @tfrc/app (see CONTRACT.md). Values diverge on
+   purpose — this file is self-contained per decisions/0004.md and does
+   not import anything from @tfrc/app.
+   ========================================================================== */
+
+:root {
+  --color-surface:         oklch(0.988 0.003 270);
+  --color-surface-raised:  oklch(1 0 0);
+  --color-surface-sunken:  oklch(0.962 0.006 270);
+  --color-surface-inverse: var(--ramp-neutral-950);
+
+  --color-border-subtle: oklch(0.912 0.010 270);
+  --color-border-strong: oklch(0.808 0.016 270);
+
+  --color-text-primary:   var(--ramp-neutral-900);
+  --color-text-secondary: var(--ramp-neutral-600);
+  --color-text-muted:     var(--ramp-neutral-400);
+  --color-text-inverse:   oklch(0.980 0.004 270);
+
+  --color-accent:       var(--ramp-brand-600);
+  --color-accent-hover: var(--ramp-brand-700);
+  --color-accent-fg:    #fff;
+  --color-accent-bg:    var(--ramp-brand-100);
+  --color-accent-bg-fg: var(--ramp-brand-800);
+
+  --color-focus: oklch(0.560 0.150 235);
+
+  --color-info-bg:   oklch(0.940 0.032 235);
+  --color-info-fg:   oklch(0.360 0.070 237);
+  --color-info-line: oklch(0.560 0.150 235);
+
+  --color-danger-solid: oklch(0.615 0.205 25);
+  --color-danger-bg:    oklch(0.940 0.035 25);
+  --color-danger-fg:    oklch(0.475 0.170 25);
+  --color-danger-line:  oklch(0.615 0.205 25);
+
+  --color-success-bg:   oklch(0.940 0.040 150);
+  --color-success-fg:   oklch(0.455 0.090 150);
+  --color-success-line: oklch(0.590 0.110 150);
+
+  /* NOTE: --color-gain / --color-loss are intentionally NOT defined here.
+     @tfrc/web must never reference them. See decisions/0002.md and
+     scripts/lint-boundaries.js, which checks this mechanically. */
+
+  --gold: var(--ramp-support-500);
+
+  /* ---- corporate-only scale: this is most of the divergence ---- */
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-sans:    "Instrument Sans", system-ui, sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, monospace;
+
+  --step-hero: clamp(2.75rem, 7.5vw, 6rem);   /* app tops out at 1.75rem */
+  --step-xl:   clamp(2rem, 4vw, 3.25rem);
+  --step-lg:   1.5rem;
+  --step-body: 1.0625rem;                      /* app body is 0.9375rem */
+  --step-sm:   0.875rem;
+  --step-xs:   0.6875rem;
+
+  --radius-sm: 0.375rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;                          /* app caps at 0.75rem */
+
+  --control-h: 3rem;
+  --gutter:    clamp(1.25rem, 5vw, 4rem);
+  --section-y: clamp(4rem, 10vw, 8rem);
+
+  --duration-fast: 160ms;
+  --duration-base: 320ms;
+  --duration-slow: 640ms;                       /* app never exceeds 200ms */
+
+  --shadow-sm: 0 1px 3px oklch(0 0 0 / 0.07);
+  --shadow-lg: 0 24px 60px oklch(0 0 0 / 0.13), 0 4px 12px oklch(0 0 0 / 0.06);
+}

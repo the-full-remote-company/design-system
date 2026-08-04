@@ -1,0 +1,101 @@
+/* ==========================================================================
+   @tfrc/web — components
+   Reference only tokens defined in tokens.css. Zero raw color literals.
+   See AGENTS.md rule 2.
+   ========================================================================== */
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -0.032em;
+  line-height: 1.02;
+}
+
+.wrap {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+/* ---- Button — same API/class names as @tfrc/app, different values ---- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: var(--control-h);
+  padding: 0 1.5rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background var(--duration-fast) var(--ease-quint),
+              color var(--duration-fast) var(--ease-quint),
+              border-color var(--duration-fast) var(--ease-quint),
+              transform var(--duration-fast) var(--ease-quint);
+}
+.btn:hover { transform: translateY(-1px); }
+.btn--primary { background: var(--color-accent); color: var(--color-accent-fg); }
+.btn--primary:hover { background: var(--color-accent-hover); }
+.btn--secondary {
+  background: var(--color-surface-raised);
+  border-color: var(--color-border-strong);
+  color: var(--color-text-primary);
+}
+.btn--secondary:hover { background: var(--color-surface-sunken); }
+.btn--onDark {
+  background: transparent;
+  border-color: var(--ramp-neutral-700);
+  color: var(--color-text-inverse);
+}
+.btn--onDark:hover { border-color: var(--gold); color: var(--gold); }
+
+/* ---- Card — web only, no app equivalent ---- */
+.card {
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  transition: transform var(--duration-base) var(--ease-quint),
+              box-shadow var(--duration-base) var(--ease-quint),
+              border-color var(--duration-base) var(--ease-quint);
+}
+.card--interactive:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--color-border-strong);
+}
+
+/* ---- Stat strip — layout primitive, no app equivalent ---- */
+.stats {
+  display: grid;
+  gap: 1px;
+  background: var(--color-border-subtle);
+  border-top: 1px solid var(--color-border-subtle);
+  border-bottom: 1px solid var(--color-border-subtle);
+  grid-template-columns: repeat(2, 1fr);
+}
+@media (min-width: 760px) { .stats { grid-template-columns: repeat(4, 1fr); } }
+.stat { background: var(--color-surface); padding: 2rem var(--gutter); }
+.stat__n {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1;
+}
+.stat__l { font-size: 0.8125rem; color: var(--color-text-secondary); margin-top: 0.5rem; }
+
+/* ---- CTA band — full-bleed accent, no app equivalent.
+   Inside a product this density of persuasion would be an interruption;
+   on a marketing page it is the entire point. ---- */
+.cta {
+  background: var(--color-accent);
+  color: #fff;
+  border-radius: var(--radius-xl);
+  padding: clamp(2.5rem, 6vw, 4.5rem);
+}

@@ -1,0 +1,46 @@
+/* ==========================================================================
+   DAYLIGHT — the original amber/ink direction, predating the finance/
+   real-estate scope. Kept as a documented alternate. Not imported by any
+   shipped package.
+   ========================================================================== */
+
+[data-palette="daylight"] {
+  --ramp-neutral-50:  oklch(0.975 0.004 265);
+  --ramp-neutral-100: oklch(0.945 0.006 265);
+  --ramp-neutral-200: oklch(0.885 0.009 265);
+  --ramp-neutral-300: oklch(0.785 0.013 265);
+  --ramp-neutral-400: oklch(0.655 0.018 265);
+  --ramp-neutral-500: oklch(0.545 0.022 265);
+  --ramp-neutral-600: oklch(0.445 0.026 265);
+  --ramp-neutral-700: oklch(0.350 0.028 265);
+  --ramp-neutral-800: oklch(0.272 0.028 265);
+  --ramp-neutral-900: oklch(0.208 0.026 265);
+  --ramp-neutral-950: oklch(0.158 0.024 265);
+
+  --ramp-brand-50:  oklch(0.975 0.022 88);
+  --ramp-brand-100: oklch(0.945 0.048 88);
+  --ramp-brand-200: oklch(0.895 0.090 86);
+  --ramp-brand-300: oklch(0.850 0.125 82);
+  --ramp-brand-400: oklch(0.800 0.148 78);
+  --ramp-brand-500: oklch(0.752 0.158 72);
+  --ramp-brand-600: oklch(0.672 0.150 65);
+  --ramp-brand-700: oklch(0.560 0.128 58);
+  --ramp-brand-800: oklch(0.452 0.100 55);
+  --ramp-brand-900: oklch(0.362 0.078 55);
+
+  --ramp-support-50:  oklch(0.972 0.015 195);
+  --ramp-support-100: oklch(0.930 0.032 195);
+  --ramp-support-200: oklch(0.862 0.056 194);
+  --ramp-support-300: oklch(0.772 0.080 193);
+  --ramp-support-400: oklch(0.665 0.092 192);
+  --ramp-support-500: oklch(0.562 0.092 192);
+  --ramp-support-600: oklch(0.472 0.082 192);
+  --ramp-support-700: oklch(0.392 0.066 193);
+  --ramp-support-800: oklch(0.312 0.050 194);
+  --ramp-support-900: oklch(0.252 0.040 195);
+
+  --color-gain:      oklch(0.510 0.120 150);
+  --color-gain-tint: oklch(0.945 0.045 150);
+  --color-loss:      oklch(0.530 0.190 25);
+  --color-loss-tint: oklch(0.940 0.040 25);
+}
