@@ -17,7 +17,7 @@
     "./palettes/*": "./src/palettes/*.css"
   },
   "bin": {
-    "tfrc-verify": "./bin/tfrc-verify.js"
+    "tfrc-verify": "bin/tfrc-verify.js"
   },
   "files": ["src", "bin", "CONTRACT.md", "README.md"],
   "publishConfig": {
