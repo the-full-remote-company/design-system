@@ -92,16 +92,24 @@ enforceable comes before the thing that satisfies it.
 
 ## Not done — needs something this session cannot provide
 
-Listed so the next reader knows these are pending, not overlooked. None
-are blocked by design work; all three are blocked on access.
+Listed so the next reader knows these are pending, not overlooked.
 
-- [ ] **T025** Verify the `@tfrc` npm scope is available and owned by the
-      company. If it is taken, `decisions/0009.md` needs a successor ADR,
-      not an improvised workaround. Carried in `STATE.md` as an open risk.
+- [x] **T025** Verify the `@tfrc` npm scope is available. Checked
+      2026-08-08 against the public registry: `@tfrc/foundation`,
+      `@tfrc/marketing`, `@tfrc/product` all 404, and
+      `registry.npmjs.org/-/org/tfrc/package` returns "Scope not found" —
+      the scope itself, not just those three names, is unclaimed. See
+      `STATE.md`'s `resolved_risks`. **Caveat:** npm scopes are
+      first-come, claimed automatically on first publish — this is a
+      point-in-time check, not a reservation, so re-verify immediately
+      before T026 if significant time has passed.
 - [ ] **T026** Add the `NPM_TOKEN` repository secret with publish rights to
       the `@tfrc` scope, then tag `v1.2.0` to perform the first real
       publish. Until this happens, FR-001 is implemented but unproven: no
-      consumer can install anything yet.
+      consumer can install anything yet. **Now the only remaining blocker**
+      on a consumer repo actually being able to install `@tfrc/marketing`
+      or `@tfrc/product` — needs a human with publish credentials, not
+      further design work.
 - [ ] **T027** Prove SC-001 the only way it can be proven — have someone
       who has not read this repo build a styled page from `CONSUMING.md`
       alone. Until then, SC-001 is asserted, not measured.

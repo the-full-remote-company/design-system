@@ -14,7 +14,11 @@ repo_version: 1.2.0
 last_updated: 2026-08-08
 status: Two dialect packages renamed, all three made publishable, and
         consumer-side verification shipped. No token, palette, theme or
-        component changed. See decisions/0008.md and 0009.md.
+        component changed. See decisions/0008.md and 0009.md. The "@tfrc"
+        scope was confirmed unclaimed on public npm 2026-08-08 — see
+        resolved_risks below. T026 (add NPM_TOKEN, tag, first publish) is
+        now the only remaining blocker on any consumer being able to
+        install anything.
 
 spec_driven_development:
   adopted: true
@@ -101,12 +105,20 @@ themes_shipped_on_product_layer:
 
 open_risks:                      # unverified assumptions that would need a
                                  # decision reversed, not a patch, if wrong.
-  - the "@tfrc" npm scope is assumed available and owned by the company.
-    NOT VERIFIED — no network access when 1.2.0 was built. If it's taken,
-    decisions/0009.md needs a successor ADR, not an improvised workaround.
   - tfrc-verify's raw-value detection is heuristic and will produce some
     false positives. The tfrc-allow-raw escape hatch exists for those, and
     every use of it is printed and counted so erosion stays visible.
+
+resolved_risks:
+  - the "@tfrc" npm scope is unclaimed on the public registry, checked
+    2026-08-08: `@tfrc/foundation`, `@tfrc/marketing`, and `@tfrc/product`
+    all 404, and registry.npmjs.org/-/org/tfrc/package returns "Scope not
+    found" (i.e. nobody owns the org/scope itself, not just those three
+    package names). NOT the same as reserving it — the scope is claimed
+    automatically by whichever account first publishes to it, so this is
+    current as of the check and could change before T026 runs. specs/002
+    T025 is done; T026 (NPM_TOKEN + first publish) is the remaining
+    blocker and should happen soon, since availability isn't a hold.
 
 known_gaps_for_v1.3:             # intentionally out of scope, not
                                  # forgotten. Don't silently re-decide these —

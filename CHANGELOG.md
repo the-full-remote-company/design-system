@@ -60,6 +60,17 @@ it cost nothing was about to close. See `decisions/0008.md`.
   platform-neutral token export, no product code in this repo. See
   `STATE.md`'s known gaps.
 
+### Post-release note — 2026-08-08
+
+Checked the one open risk this release recorded: whether the `@tfrc` scope
+is actually available on public npm. It is — `@tfrc/foundation`,
+`@tfrc/marketing`, and `@tfrc/product` all 404, and the scope itself
+(not just those three names) returns "Scope not found". See `STATE.md`'s
+`resolved_risks`. This does not reserve the scope — npm claims a scope on
+first publish, first-come — so `specs/002` T026 (add `NPM_TOKEN`, tag,
+publish) is now the only remaining blocker on any consumer installing
+anything.
+
 ## 1.1.0 — 2026-08-04
 
 Adopted GitHub Spec Kit's Spec-Driven Development conventions on top of
