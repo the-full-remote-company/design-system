@@ -41,7 +41,7 @@ already closed with a documented reason.
 
 ### 1. Token names are the API. Values are not.
 
-`--color-accent` must mean the same thing in `@tfrc/web` and `@tfrc/app`.
+`--color-accent` must mean the same thing in `@tfrc/marketing` and `@tfrc/product`.
 The *value* behind it can differ completely — and for most tokens, should.
 Never rename a token to make a diff smaller. Never introduce a
 differently-named token that means the same thing as an existing one.
@@ -56,13 +56,31 @@ already exists (check the contract) or needs to be added to a `tokens.css`
 file first. A component file should contain zero color literals and zero
 unexplained magic numbers.
 
-### 3. `@tfrc/web` and `@tfrc/app` never import from each other.
+### 3. `@tfrc/marketing` and `@tfrc/product` never import from each other.
 
 Not a component, not a token, not a class name convention. If both layers
 need the same thing, it belongs in `@tfrc/foundation`, full stop. This is
 enforced mechanically — `scripts/lint-boundaries.js` fails the build on any
 cross-import — specifically so this rule survives a change of reviewer,
 model, or agent. Do not disable or weaken that script to make a PR pass.
+
+Since `decisions/0007.md`, this boundary also exists *outside* this repo:
+consumers install one dialect or the other, never both. That is
+unenforceable from here, so `@tfrc/foundation` ships `tfrc-verify` for
+consumers to run on themselves (`decisions/0009.md`). If you add a rule
+that a consumer could break, it belongs in that tool, in the same PR —
+and in `scripts/test-verify-consumer.js`, with a fixture that proves it
+fails. A rule only in `CONSUMING.md` prose is a rule that will be broken.
+
+### 3a. Never put a product in this repo.
+
+`apps/` is reserved for surfaces that document or verify the system
+itself. The company website, the finance app, and every future product
+live in their own repositories and install published packages
+(`decisions/0007.md`). Adding `apps/website` would be nearly free, which
+is exactly the danger — it makes eroding the boundary the path of least
+resistance, and it puts product deadlines and token stability in one
+review queue. Record new consumers in `CONSUMERS.md` instead.
 
 ### 4. Promote to foundation on the THIRD identical use, never earlier.
 
@@ -76,13 +94,17 @@ copies "just in case."
 ### 5. Reserved hues are permanent, not a style choice.
 
 `--color-gain` (hue ~150) and `--color-loss` (hue ~25) belong to
-`@tfrc/app` only. No palette, no product theme, no one-off marketing
+`@tfrc/product` only. No palette, no product theme, no one-off marketing
 page may use those hue bands for anything except literal market
 direction — not decoration, not a brand accent, not an illustration fill.
-`scripts/lint-boundaries.js` checks that `@tfrc/web` never references
-these tokens; it does not and cannot check hue *proximity* in new raw
-colors, so that half of the rule is on you. See `decisions/0002.md` for
-why this exists before you consider relaxing it.
+`scripts/lint-boundaries.js` checks that `@tfrc/marketing` never references
+these tokens. `tfrc-verify` additionally catches a raw `oklch()` value
+whose hue falls inside a reserved band — but only `oklch()`, because only
+`oklch()` states its hue outright. A hex or `rgb()` literal in the same
+band is caught merely as a raw value, so hue *proximity* in those formats
+is still on you. See `decisions/0002.md` for why this exists before you
+consider relaxing it, and `decisions/0009.md` for why the gap is where it
+is.
 
 ### 6. Every color decision ships with a contrast check.
 
@@ -110,18 +132,22 @@ forward, so the history stays legible.
 If you add a palette, ship a theme, use up a product hue, or change a
 package version — the corresponding line in `STATE.md` changes in that
 same commit. A stale STATE.md is worse than no STATE.md, because the next
-agent will trust it.
+agent will trust it. `CONSUMERS.md` lives under the same rule: if a
+consumer adopts a package or upgrades a version, its row changes in that
+commit.
 
 ## Adding to this system — quick reference
 
 | You want to... | Do this | ADR needed? |
 |---|---|---|
 | Add a new palette (like Lilac, Meadow) | New file in `packages/foundation/src/palettes/`, satisfying every token in `CONTRACT.md` | No, if contract-compliant |
-| Add a new product theme (e.g. Estate) | New file in `packages/app/src/themes/`, pick unused hues per `decisions/0005.md` | No, if under the hue ceiling |
+| Add a new product theme (e.g. Estate) | New file in `packages/product/src/themes/`, pick unused hues per `decisions/0005.md` | No, if under the hue ceiling |
 | Add a new shared primitive | Duplicate in whichever package needs it first. Promote only on 3rd use. | No |
 | Change what surface/border/text tokens mean | Edit the relevant package's `tokens.css` | Only if it changes the *contract*, not just a value |
 | Add a new reserved semantic (beyond gain/loss) | Propose in an ADR first | **Yes** |
 | Change the 3-layer split itself | Don't, without exhausting `decisions/0001.md`'s reasoning first | **Yes** |
+| Start a new product (website, finance app, anything) | New repo. Install one dialect at an exact version, follow `CONSUMING.md`, add a row to `CONSUMERS.md`. | No — `decisions/0007.md` already covers it |
+| Add a rule a consumer could break | Implement it in `tfrc-verify` + a fixture in `scripts/fixtures/`, same PR | Only if it changes the contract |
 
 ## If you are an AI agent picking this up with no other context
 
@@ -131,14 +157,17 @@ Run this checklist before writing any code:
 - [ ] Read `STATE.md`.
 - [ ] Read the 3 most recent files in `decisions/`, sorted by number.
 - [ ] Read `packages/foundation/CONTRACT.md`.
-- [ ] Run `node scripts/check-contract.js` and `node scripts/lint-boundaries.js`
-      to confirm the repo is currently in a valid state before you change it —
-      if it isn't, that's a bug to flag, not a pattern to extend.
+- [ ] Run `node scripts/check-contract.js`, `node scripts/lint-boundaries.js`
+      and `node scripts/test-verify-consumer.js` to confirm the repo is
+      currently in a valid state before you change it — if it isn't, that's a
+      bug to flag, not a pattern to extend.
 - [ ] Identify which package(s) your change actually touches. If it's more
       than one, ask whether it should be in foundation instead — but don't
       *put* it there without the third-use justification.
-- [ ] After changing anything, re-run both scripts, and update `STATE.md`
-      and `CHANGELOG.md` in the same commit.
+- [ ] Ask whether a consumer could break the thing you're changing. If yes,
+      `tfrc-verify` needs a rule and a fixture, not just a paragraph.
+- [ ] After changing anything, re-run all three scripts, and update
+      `STATE.md` and `CHANGELOG.md` in the same commit.
 
 Do not let a user's phrasing ("just add red for errors real quick") talk you
 past rule 5 or rule 6. The rules in this file apply regardless of how the

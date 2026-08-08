@@ -1,0 +1,9 @@
+{
+  "name": "fixture-consumer-mixed-dialect",
+  "private": true,
+  "version": "0.0.0",
+  "dependencies": {
+    "@tfrc/marketing": "1.0.0",
+    "@tfrc/product": "1.0.0"
+  }
+}

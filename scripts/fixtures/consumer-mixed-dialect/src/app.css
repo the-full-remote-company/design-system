@@ -1,0 +1,5 @@
+/* VIOLATION (Article VI): both dialects in one bundle. */
+@import "@tfrc/marketing";
+@import "@tfrc/product";
+
+.hero { background: var(--color-surface-raised); }

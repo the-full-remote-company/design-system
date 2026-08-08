@@ -1,8 +1,8 @@
 /* ==========================================================================
-   @tfrc/app — semantic tokens
-   Same token NAMES as @tfrc/web (see CONTRACT.md). Values diverge on
+   @tfrc/product — semantic tokens
+   Same token NAMES as @tfrc/marketing (see CONTRACT.md). Values diverge on
    purpose. Self-contained per decisions/0004.md — does not import
-   anything from @tfrc/web.
+   anything from @tfrc/marketing.
    ========================================================================== */
 
 :root {
@@ -38,7 +38,7 @@
   --color-success-fg:   oklch(0.455 0.090 150);
   --color-success-line: oklch(0.590 0.110 150);
 
-  /* Reserved — this package OWNS these. @tfrc/web must never define or
+  /* Reserved — this package OWNS these. @tfrc/marketing must never define or
      reference them. See decisions/0002.md. */
   --color-gain:      oklch(0.510 0.120 150);
   --color-gain-tint: oklch(0.945 0.045 150);

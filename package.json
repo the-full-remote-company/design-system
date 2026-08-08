@@ -1,12 +1,18 @@
 {
   "name": "tfrc-design-system",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
-  "description": "The Full Remote Company — design system monorepo. Foundation, web (corporate), app (product, themed per product).",
+  "license": "MIT",
+  "description": "The Full Remote Company — design system monorepo. Foundation, marketing dialect, product dialect (themed per product). Products consume these as published packages from their own repos — see decisions/0007.md.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/the-full-remote-company/design-system.git"
+  },
   "workspaces": ["packages/*", "apps/*"],
   "scripts": {
     "check:contract": "node scripts/check-contract.js",
     "lint:boundaries": "node scripts/lint-boundaries.js",
-    "verify": "npm run check:contract && npm run lint:boundaries"
+    "test:verify-consumer": "node scripts/test-verify-consumer.js",
+    "verify": "npm run check:contract && npm run lint:boundaries && npm run test:verify-consumer"
   }
 }

@@ -16,3 +16,13 @@ jobs:
         run: node scripts/check-contract.js
       - name: Lint package boundaries
         run: node scripts/lint-boundaries.js
+      # Article II: a governance check nobody has watched fail is
+      # indistinguishable from one that always passes. This proves
+      # tfrc-verify still rejects every rule it documents.
+      - name: Test the consumer-side checker
+        run: node scripts/test-verify-consumer.js
+      # The tool consumers actually run, exercised against this repo's own
+      # compliant fixture — catches a syntax error or a crash in the bin
+      # before a product repo hits it via npx.
+      - name: Smoke-test tfrc-verify
+        run: node packages/foundation/bin/tfrc-verify.js --dir scripts/fixtures/consumer-clean

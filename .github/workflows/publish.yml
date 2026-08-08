@@ -1,0 +1,61 @@
+name: publish
+
+# Releasing is a deliberate, tagged act — never someone's laptop running
+# `npm publish`. See decisions/0009.md.
+#
+# To release: bump the versions in packages/*/package.json, update
+# CHANGELOG.md and STATE.md in the same commit, then:
+#   git tag v1.2.0 && git push origin v1.2.0
+#
+# Requires an npm automation token in the repo secret NPM_TOKEN, with
+# publish rights to the @tfrc scope.
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+  id-token: write # npm provenance
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      # Article III: nothing is published that has not passed the contract
+      # and boundary checks. A tag is not a licence to skip the gate.
+      - run: node scripts/check-contract.js
+      - run: node scripts/lint-boundaries.js
+      - run: node scripts/test-verify-consumer.js
+
+  publish:
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: "https://registry.npmjs.org"
+      # Order matters: the two dialects depend on an exact foundation
+      # version, so foundation must exist on the registry first.
+      - name: Publish @tfrc/foundation
+        run: npm publish --provenance --access public
+        working-directory: packages/foundation
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish @tfrc/marketing
+        run: npm publish --provenance --access public
+        working-directory: packages/marketing
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish @tfrc/product
+        run: npm publish --provenance --access public
+        working-directory: packages/product
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

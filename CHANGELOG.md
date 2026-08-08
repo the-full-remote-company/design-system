@@ -4,6 +4,62 @@ All notable changes to this repo. Each package also carries its own
 version in `package.json` and in `STATE.md`; this file is the human-
 readable narrative across all of them.
 
+## 1.2.0 — 2026-08-08
+
+Products can now be built. The two dialect packages were renamed to say
+what they actually are, all three packages became publishable, and the
+governance that used to stop at this repo's edge now ships to consumers.
+
+**Breaking for anyone who had installed the old packages — which is
+nobody.** `@tfrc/web@1.0.0` and `@tfrc/app@1.0.0` were `"private": true`
+and never reached a registry, so there is no migration path to document.
+This is why the rename happened now rather than later: the window in which
+it cost nothing was about to close. See `decisions/0008.md`.
+
+- **Renamed** `@tfrc/web` → `@tfrc/marketing` (`packages/web/` →
+  `packages/marketing/`) and `@tfrc/app` → `@tfrc/product`
+  (`packages/app/` → `packages/product/`). The old names described a
+  delivery platform; the split they encode is one of intent. Package
+  *count* is unchanged, so Article VII's ceiling is untouched.
+  `decisions/0008.md`.
+- **Added** `packages/foundation/bin/tfrc-verify.js`, shipped as the
+  `tfrc-verify` executable. A consumer runs `npx tfrc-verify` in its own
+  repo to catch mixed dialects, reserved-color misuse, raw color literals,
+  and unpinned versions — the rules this repo's own lints cannot see once
+  packages are installed from a registry. `decisions/0009.md`.
+- **Added** `scripts/test-verify-consumer.js` and `scripts/fixtures/` —
+  five deliberately-broken consumer repos proving each rule actually
+  fails. Wired into CI, because a governance check nobody has watched fail
+  is indistinguishable from one that always passes.
+- **Added** `CONSUMING.md` (how an outside repo adopts the language) and
+  `CONSUMERS.md` (who has adopted it, and on what version).
+- **Added** `LICENSE` (MIT) and `.github/workflows/publish.yml`, a
+  tag-triggered release that re-runs every check before publishing.
+- **Changed** all three packages: `"private": true` removed, plus
+  `license`, `repository`, `exports`, `files`, `publishConfig`. Target is
+  the public npm registry under the `@tfrc` scope. **Nothing is published
+  yet** — that needs an `NPM_TOKEN` and a tag.
+- **Changed** `scripts/lint-boundaries.js` to also match the pre-rename
+  names, so a stale `@import "@tfrc/app"` reports as a boundary violation
+  with a useful message instead of a missing-module error downstream.
+- **Amended** the constitution to 1.0.1 — identifier rename across
+  Articles I, V, VI, VII, plus a clarification to Article II that a check
+  for a rule breakable only in a consumer's codebase must be shippable to
+  that consumer. No rule added, removed, or reversed.
+- **Rewrote** `ARCHITECTURE.md` and `README.md` to state in those words
+  that the two dialects are *not* two projects, and that neither is a
+  product. This was the documentation fix `decisions/0007.md` identified
+  as the real problem and never carried out; the same misreading recurred
+  three days later, which is what triggered the rename.
+- **Fixed** a false claim in `specs/002-product-consumption-contract/spec.md`:
+  it stated its review checklist was "run and passing" while
+  `checklist.md` did not exist. The checklist now exists, has been run,
+  and records its two borderline items rather than suppressing them.
+  `plan.md` and `tasks.md` were written to complete the spec workflow.
+- **Not done, deliberately:** no native-client support, no
+  platform-neutral token export, no product code in this repo. See
+  `STATE.md`'s known gaps.
+
 ## 1.1.0 — 2026-08-04
 
 Adopted GitHub Spec Kit's Spec-Driven Development conventions on top of

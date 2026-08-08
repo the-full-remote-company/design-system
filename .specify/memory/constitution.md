@@ -1,7 +1,32 @@
 <!--
 Sync Impact Report
-Version: (none) → 1.0.0
-Ratified: 2026-08-04
+Version: 1.0.0 → 1.0.1
+Ratified: 2026-08-04 | Amended: 2026-08-08
+Change type: PATCH — identifier rename only. Articles I, V, VI and VII now
+             name `@tfrc/marketing` and `@tfrc/product` where they named
+             `@tfrc/web` and `@tfrc/app`. No article was added, removed,
+             reversed, or altered in what it requires: the three-package
+             ceiling is still three, the reserved hues are still reserved,
+             the boundary is still absolute. See decisions/0008.md.
+Modified principles: Article I (package names), Article V (package names),
+             Article VI (package names), Article VII (package names),
+             Article II (clarification only — states that a check for a
+             rule breakable only in a consumer's codebase must be
+             shippable to that consumer, which is what the existing
+             "any new mechanically-checkable rule gets a script" already
+             required; adds no new obligation)
+Added sections: none
+Removed sections: none
+Templates requiring updates:
+  ✅ .specify/templates/plan-template.md — package names in Technical
+     Context, Boundary Gate, and Project Structure
+  ✅ AGENTS.md, CONTRIBUTING.md, README.md, ARCHITECTURE.md, STATE.md
+  ✅ scripts/check-contract.js, scripts/lint-boundaries.js — real paths
+  ⬜ decisions/0001–0007, specs/001 — deliberately NOT updated. They are
+     historical records and AGENTS.md rule 7 forbids rewriting them;
+     0001 and 0007 carry a forward-link to 0008 instead.
+
+Version: 1.0.0 (initial adoption, 2026-08-04)
 Change type: Initial adoption (MINOR — new governance layer, no breaking
              change to shipped packages; see decisions/0006.md)
 Modified principles: n/a (initial version)
@@ -45,9 +70,9 @@ supersede it.
 ## Article I — Package-First Principle
 
 Every capability in this system exists as a standalone, importable
-package before anything consumes it. `@tfrc/foundation`, `@tfrc/web`,
-and `@tfrc/app` are packages, not folders of convenience. A product theme
-(`packages/app/src/themes/*.css`) is a themeable unit over `@tfrc/app`,
+package before anything consumes it. `@tfrc/foundation`, `@tfrc/marketing`,
+and `@tfrc/product` are packages, not folders of convenience. A product theme
+(`packages/product/src/themes/*.css`) is a themeable unit over `@tfrc/product`,
 not inline overrides scattered through a consuming application.
 
 No feature may be built by copy-pasting CSS directly into a consuming
@@ -67,6 +92,14 @@ plausibly deniably miss; a rule with a script is one a CI job can block
 on. `scripts/check-contract.js` and `scripts/lint-boundaries.js` exist
 because of this article, not the other way around — any new
 mechanically-checkable rule gets a script in the same PR that adds it.
+
+This obligation does not stop at this repository's edge. Where a rule can
+only be broken in a consumer's codebase — which is where Articles V and VI
+became breakable once products began installing these packages from a
+registry (`decisions/0007.md`) — the check must be *shippable to* that
+consumer rather than merely run here. `tfrc-verify`, shipped as an
+executable in `@tfrc/foundation`, exists for that reason; see
+`decisions/0009.md`.
 
 ## Article III — Contract-First Imperative (NON-NEGOTIABLE)
 
@@ -88,15 +121,15 @@ change — never worked around locally. See `AGENTS.md` rule 2.
 ## Article V — Reserved Semantic Colors (project-defined)
 
 The hue bands reserved for market direction (`--color-gain`,
-`--color-loss`) belong exclusively to `@tfrc/app` and may never be used
-as brand, decorative, or illustrative color anywhere in `@tfrc/web` or
+`--color-loss`) belong exclusively to `@tfrc/product` and may never be used
+as brand, decorative, or illustrative color anywhere in `@tfrc/marketing` or
 any future package. See `decisions/0002-reserved-hues-for-financial-semantics.md`.
 This article does not sunset and is not subject to convenience
 exceptions.
 
 ## Article VI — Package Boundary Isolation (project-defined)
 
-`@tfrc/web` and `@tfrc/app` never import from each other, at any level —
+`@tfrc/marketing` and `@tfrc/product` never import from each other, at any level —
 not a component, not a token, not a class-naming convention. A shared
 need graduates into `@tfrc/foundation` only on its third identical use
 across packages, never in anticipation of a second. See
@@ -105,8 +138,8 @@ across packages, never in anticipation of a second. See
 ## Article VII — Simplicity Gate
 
 The shared system holds a maximum of three top-level packages:
-`@tfrc/foundation`, `@tfrc/web`, `@tfrc/app`. A new product line is a
-**theme file** under `packages/app/src/themes/`, never a fourth
+`@tfrc/foundation`, `@tfrc/marketing`, `@tfrc/product`. A new product line is a
+**theme file** under `packages/product/src/themes/`, never a fourth
 top-level package. No token, component, or configuration may be added in
 anticipation of a need that doesn't exist yet — see the "no
 future-proofing" gate in `.specify/templates/plan-template.md`. Any
@@ -152,4 +185,4 @@ needs redesigning, not a reason to fake its input.
   constitution wins, and the conflicting document is a bug to fix in the
   same PR that notices it.
 
-**Version:** 1.0.0 | **Ratified:** 2026-08-04 | **Last amended:** 2026-08-04
+**Version:** 1.0.1 | **Ratified:** 2026-08-04 | **Last amended:** 2026-08-08

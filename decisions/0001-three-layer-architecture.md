@@ -3,6 +3,13 @@
 **Status:** Accepted
 **Date:** 2026-08-04
 
+> **Naming note (added 2026-08-08):** `@tfrc/web` and `@tfrc/app` were
+> renamed to `@tfrc/marketing` and `@tfrc/product` by
+> `decisions/0008-renaming-web-and-app-to-marketing-and-product.md`. The
+> architecture below is unchanged; only the two identifiers are. This text
+> is left as originally written — it is a record of a decision made on that
+> date, not a live reference.
+
 ## Context
 
 The company runs a corporate site (thefullremotecompany.com) and will ship

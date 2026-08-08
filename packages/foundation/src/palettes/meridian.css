@@ -1,7 +1,7 @@
 /* ==========================================================================
    MERIDIAN — the v1 shipped palette. See decisions/0003.md for why.
 
-   Three ramps. Components in @tfrc/web and @tfrc/app never reference these
+   Three ramps. Components in @tfrc/marketing and @tfrc/product never reference these
    variables directly — only through each package's own semantic tokens/
    tokens.css, per decisions/0004.md. This file's only job is to define the
    raw color material.
@@ -46,14 +46,14 @@
   --ramp-support-800: oklch(0.398 0.086 60);
   --ramp-support-900: oklch(0.320 0.068 58);
 
-  /* Reserved market-direction colors. @tfrc/app only — never @tfrc/web.
+  /* Reserved market-direction colors. @tfrc/product only — never @tfrc/marketing.
      See decisions/0002-reserved-hues-for-financial-semantics.md. */
   --color-gain:      oklch(0.510 0.120 150);
   --color-gain-tint: oklch(0.945 0.045 150);
   --color-loss:      oklch(0.530 0.190 25);
   --color-loss-tint: oklch(0.940 0.040 25);
 
-  /* Product spectrum — @tfrc/app only. Constant L/C, hue varies.
+  /* Product spectrum — @tfrc/product only. Constant L/C, hue varies.
      See decisions/0005-product-spectrum-hue-ceiling.md before adding one. */
   --product-capital: oklch(0.545 0.185 275);
   --product-estate:  oklch(0.590 0.130 65);

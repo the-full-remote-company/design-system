@@ -1,12 +1,30 @@
 {
   "name": "@tfrc/foundation",
   "version": "1.0.0",
-  "private": true,
-  "description": "Color ramps, spacing base, reset, and the token contract. No user-facing components. Consumed by @tfrc/web and @tfrc/app — never the other way around.",
+  "license": "MIT",
+  "description": "Color ramps, spacing base, reset, and the token contract. No user-facing components. Consumed by @tfrc/marketing and @tfrc/product — never the other way around.",
+  "keywords": ["design-system", "design-tokens", "css", "tailwind"],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/the-full-remote-company/design-system.git",
+    "directory": "packages/foundation"
+  },
+  "homepage": "https://github.com/the-full-remote-company/design-system/tree/main/packages/foundation#readme",
+  "bugs": "https://github.com/the-full-remote-company/design-system/issues",
   "main": "src/index.css",
   "exports": {
     ".": "./src/index.css",
     "./palettes/*": "./src/palettes/*.css"
   },
-  "files": ["src", "CONTRACT.md"]
+  "bin": {
+    "tfrc-verify": "./bin/tfrc-verify.js"
+  },
+  "files": ["src", "bin", "CONTRACT.md", "README.md"],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "engines": {
+    "node": ">=18"
+  }
 }

@@ -2,9 +2,9 @@
 /**
  * lint-boundaries.js
  *
- * Enforces AGENTS.md rule 3 ("@tfrc/web and @tfrc/app never import from
+ * Enforces AGENTS.md rule 3 ("@tfrc/marketing and @tfrc/product never import from
  * each other") and half of rule 5 (the reserved gain/loss tokens must
- * never appear in @tfrc/web's source).
+ * never appear in @tfrc/marketing's source).
  *
  * Dependency-free on purpose — this has to keep working even before
  * `pnpm install` has ever been run in this repo. See STATE.md's known
@@ -17,8 +17,8 @@ const fs = require("fs");
 const path = require("path");
 
 const ROOT = path.resolve(__dirname, "..");
-const WEB_SRC = path.join(ROOT, "packages", "web", "src");
-const APP_SRC = path.join(ROOT, "packages", "app", "src");
+const MARKETING_SRC = path.join(ROOT, "packages", "marketing", "src");
+const PRODUCT_SRC = path.join(ROOT, "packages", "product", "src");
 
 let violations = [];
 
@@ -46,26 +46,32 @@ function check(files, forbiddenPatterns, label) {
   }
 }
 
-// @tfrc/web must never import @tfrc/app, and must never reference the
+// @tfrc/marketing must never import @tfrc/product, and must never reference the
 // reserved gain/loss tokens (decisions/0002.md).
 // Reserved-token check matches DEFINITIONS (--color-gain:) and USAGES
 // (var(--color-gain)) only — not a bare mention inside a comment, since
 // explaining *why* a token is absent is legitimate and common (see
-// packages/web/src/tokens.css). A regex that flagged prose would train
+// packages/marketing/src/tokens.css). A regex that flagged prose would train
 // people to stop explaining the rule in comments, which is the opposite
 // of what AGENTS.md wants.
-check(walk(WEB_SRC), [
-  { pattern: /@import\s+["']@tfrc\/app/i, message: "imports @tfrc/app — forbidden, see AGENTS.md rule 3" },
-  { pattern: /@import\s+["'].*packages\/app/i, message: "imports from packages/app by relative path — forbidden" },
+//
+// The pre-0008 names (`@tfrc/app`, `@tfrc/web`, `packages/app`,
+// `packages/web`) are matched too. They resolve to nothing now, so such an
+// import would be a build error rather than a live boundary breach — but
+// naming it as a boundary violation gives a clearer message than a
+// missing-module stack trace. See decisions/0008.md.
+check(walk(MARKETING_SRC), [
+  { pattern: /@import\s+["']@tfrc\/(product|app)/i, message: "imports @tfrc/product — forbidden, see AGENTS.md rule 3" },
+  { pattern: /@import\s+["'].*packages\/(product|app)/i, message: "imports from packages/product by relative path — forbidden" },
   { pattern: /--color-gain\s*:|var\(\s*--color-gain\s*\)/, message: "defines or uses reserved token --color-gain — see decisions/0002.md" },
   { pattern: /--color-loss\s*:|var\(\s*--color-loss\s*\)/, message: "defines or uses reserved token --color-loss — see decisions/0002.md" },
-], "web");
+], "marketing");
 
-// @tfrc/app must never import @tfrc/web.
-check(walk(APP_SRC), [
-  { pattern: /@import\s+["']@tfrc\/web/i, message: "imports @tfrc/web — forbidden, see AGENTS.md rule 3" },
-  { pattern: /@import\s+["'].*packages\/web/i, message: "imports from packages/web by relative path — forbidden" },
-], "app");
+// @tfrc/product must never import @tfrc/marketing.
+check(walk(PRODUCT_SRC), [
+  { pattern: /@import\s+["']@tfrc\/(marketing|web)/i, message: "imports @tfrc/marketing — forbidden, see AGENTS.md rule 3" },
+  { pattern: /@import\s+["'].*packages\/(marketing|web)/i, message: "imports from packages/marketing by relative path — forbidden" },
+], "product");
 
 if (violations.length) {
   console.error("✗ Boundary violations found:\n");
@@ -74,4 +80,4 @@ if (violations.length) {
   process.exit(1);
 }
 
-console.log("✓ No boundary violations — @tfrc/web and @tfrc/app remain independent.");
+console.log("✓ No boundary violations — @tfrc/marketing and @tfrc/product remain independent.");

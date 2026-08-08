@@ -1,0 +1,5 @@
+/* VIOLATION (FR-002): the caret means this consumer's appearance can change
+   without anyone deciding that it should. */
+@import "@tfrc/marketing";
+
+.footer { color: var(--color-text-muted); }

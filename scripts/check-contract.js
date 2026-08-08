@@ -8,8 +8,8 @@
  * (`--token-name:`) in each tokens.css file it's pointed at.
  *
  * Also verifies the reserved-token rule from decisions/0002.md: gain/loss
- * tokens must exist in @tfrc/app's tokens.css and must NOT exist in
- * @tfrc/web's.
+ * tokens must exist in @tfrc/product's tokens.css and must NOT exist in
+ * @tfrc/marketing's.
  *
  * Dependency-free. Exit code 0 = clean, 1 = missing tokens found.
  */
@@ -21,8 +21,8 @@ const ROOT = path.resolve(__dirname, "..");
 const CONTRACT = path.join(ROOT, "packages", "foundation", "CONTRACT.md");
 
 const TARGETS = [
-  { name: "@tfrc/web", file: path.join(ROOT, "packages", "web", "src", "tokens.css"), reserved: "forbidden" },
-  { name: "@tfrc/app", file: path.join(ROOT, "packages", "app", "src", "tokens.css"), reserved: "required" },
+  { name: "@tfrc/marketing", file: path.join(ROOT, "packages", "marketing", "src", "tokens.css"), reserved: "forbidden" },
+  { name: "@tfrc/product", file: path.join(ROOT, "packages", "product", "src", "tokens.css"), reserved: "required" },
 ];
 
 function extractRequiredTokens(contractText) {

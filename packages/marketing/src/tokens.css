@@ -1,8 +1,8 @@
 /* ==========================================================================
-   @tfrc/web — semantic tokens
-   Same token NAMES as @tfrc/app (see CONTRACT.md). Values diverge on
+   @tfrc/marketing — semantic tokens
+   Same token NAMES as @tfrc/product (see CONTRACT.md). Values diverge on
    purpose — this file is self-contained per decisions/0004.md and does
-   not import anything from @tfrc/app.
+   not import anything from @tfrc/product.
    ========================================================================== */
 
 :root {
@@ -41,7 +41,7 @@
   --color-success-line: oklch(0.590 0.110 150);
 
   /* NOTE: --color-gain / --color-loss are intentionally NOT defined here.
-     @tfrc/web must never reference them. See decisions/0002.md and
+     @tfrc/marketing must never reference them. See decisions/0002.md and
      scripts/lint-boundaries.js, which checks this mechanically. */
 
   --gold: var(--ramp-support-500);

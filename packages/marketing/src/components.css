@@ -1,5 +1,5 @@
 /* ==========================================================================
-   @tfrc/web — components
+   @tfrc/marketing — components
    Reference only tokens defined in tokens.css. Zero raw color literals.
    See AGENTS.md rule 2.
    ========================================================================== */
@@ -18,7 +18,7 @@ h1, h2, h3 {
   padding: 0 var(--gutter);
 }
 
-/* ---- Button — same API/class names as @tfrc/app, different values ---- */
+/* ---- Button — same API/class names as @tfrc/product, different values ---- */
 .btn {
   display: inline-flex;
   align-items: center;

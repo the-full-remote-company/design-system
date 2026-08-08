@@ -1,5 +1,5 @@
 /* ==========================================================================
-   @tfrc/app — components
+   @tfrc/product — components
    Reference only tokens from tokens.css. Zero raw color literals.
    Every interactive element clears --touch-min (44px) — see AGENTS.md
    and decisions/0001.md's comparison table.
@@ -8,7 +8,7 @@
 body { font-family: var(--font-ui); }
 h1, h2, h3 { font-family: var(--font-display); font-weight: 800; margin: 0; letter-spacing: -0.028em; }
 
-/* ---- Button — same API/class names as @tfrc/web, different values ---- */
+/* ---- Button — same API/class names as @tfrc/marketing, different values ---- */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -45,7 +45,7 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 800; margin: 0; lett
   color: var(--color-text-primary);
 }
 /* Amounts are a typographic problem, not just an input: tabular numerals,
-   right-aligned, decimal-locked. See packages/app README. */
+   right-aligned, decimal-locked. See packages/product README. */
 .field input.num {
   font-variant-numeric: tabular-nums;
   text-align: right;

@@ -1,12 +1,17 @@
 # Token contract
 
-Any package that defines a semantic layer (`@tfrc/web`, `@tfrc/app`, or any
+Any package that defines a semantic layer (`@tfrc/marketing`, `@tfrc/product`, or any
 future sibling) MUST define every token below in its `tokens.css`.
 Components reference these names only — never a `--ramp-*` value directly,
 and never a raw color literal. See `AGENTS.md` rule 2.
 
 `scripts/check-contract.js` verifies this mechanically for every file it's
 pointed at. Run it before merging any new or edited `tokens.css`.
+
+The other side of the contract — that a *consumer* uses only these names and
+never a raw value — is checked by `tfrc-verify`, which ships as an
+executable in this package and runs inside the consumer's own repo. See
+`CONSUMING.md` and `decisions/0009.md`.
 
 ## Surfaces
 - `--color-surface`
@@ -37,8 +42,8 @@ pointed at. Run it before merging any new or edited `tokens.css`.
 - `--color-danger-bg`, `--color-danger-fg`, `--color-danger-line`, `--color-danger-solid`
 - `--color-success-bg`, `--color-success-fg`, `--color-success-line`
 
-## Reserved — `@tfrc/app` only
-These must NOT be defined or referenced in `@tfrc/web`. See
+## Reserved — `@tfrc/product` only
+These must NOT be defined or referenced in `@tfrc/marketing`. See
 `decisions/0002-reserved-hues-for-financial-semantics.md`.
 
 - `--color-gain`, `--color-gain-tint`
@@ -50,4 +55,4 @@ These must NOT be defined or referenced in `@tfrc/web`. See
 - `--color-accent-fg` ≥ 4.5:1 against `--color-accent`.
 
 Check with any WCAG contrast tool before merging. This is not currently
-automated — see `STATE.md`'s known gaps for v1.1.
+automated — see `STATE.md`'s known gaps for v1.3.

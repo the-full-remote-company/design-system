@@ -1,0 +1,8 @@
+{
+  "name": "fixture-consumer-raw-value",
+  "private": true,
+  "version": "0.0.0",
+  "dependencies": {
+    "@tfrc/marketing": "1.0.0"
+  }
+}

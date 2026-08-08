@@ -10,7 +10,7 @@ html { -webkit-text-size-adjust: 100%; }
 
 body { margin: 0; -webkit-font-smoothing: antialiased; }
 
-/* Both @tfrc/web and @tfrc/app must define --color-focus in their own
+/* Both @tfrc/marketing and @tfrc/product must define --color-focus in their own
    tokens.css for this to resolve — see CONTRACT.md. */
 :focus-visible {
   outline: 2px solid var(--color-focus);

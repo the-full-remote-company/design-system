@@ -1,0 +1,10 @@
+/* VIOLATION (Article IV): raw literals instead of contract tokens. */
+@import "@tfrc/marketing";
+
+#hero { padding: 0; }                      /* not a hex — an ID selector */
+.hero-title { color: #1b1f24; }            /* raw hex */
+.hero-panel { background: rgba(10, 20, 30, 0.4); }  /* raw functional color */
+.hero-link[href="#top"] { color: var(--color-accent); }  /* fragment, not a hex */
+
+/* tfrc-allow-raw: brand asset background required by the OG image spec */
+.og-preview { background: #ffffff; }

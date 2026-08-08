@@ -1,0 +1,7 @@
+/* VIOLATION (Article V), twice over:
+   1. the marketing dialect referencing a market-direction token
+   2. a raw oklch literal sitting inside the reserved "gain" hue band */
+@import "@tfrc/marketing";
+
+.savings-badge { color: var(--color-gain); }
+.plan-card--highlight { border-color: oklch(0.62 0.15 152); }

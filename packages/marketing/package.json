@@ -1,0 +1,26 @@
+{
+  "name": "@tfrc/marketing",
+  "version": "1.0.0",
+  "license": "MIT",
+  "description": "The marketing dialect of the visual language — corporate site, campaigns, careers. Expressive, desktop-first, ~14 components. Never imports from @tfrc/product.",
+  "keywords": ["design-system", "design-tokens", "css", "tailwind", "marketing"],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/the-full-remote-company/design-system.git",
+    "directory": "packages/marketing"
+  },
+  "homepage": "https://github.com/the-full-remote-company/design-system/tree/main/packages/marketing#readme",
+  "bugs": "https://github.com/the-full-remote-company/design-system/issues",
+  "main": "src/index.css",
+  "exports": {
+    ".": "./src/index.css"
+  },
+  "files": ["src", "README.md"],
+  "dependencies": {
+    "@tfrc/foundation": "1.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  }
+}

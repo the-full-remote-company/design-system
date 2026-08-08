@@ -10,7 +10,7 @@ belong in spec.md.
 
 ## Technical Context
 
-- **Package(s) touched:** [`@tfrc/foundation` | `@tfrc/web` | `@tfrc/app` | new theme under `@tfrc/app`]
+- **Package(s) touched:** [`@tfrc/foundation` | `@tfrc/marketing` | `@tfrc/product` | new theme under `@tfrc/product`]
 - **New tokens required:** [list, or "none — existing contract covers this"]
 - **New reserved-hue considerations:** [does this touch gain/loss? does
   it claim a new product hue? check STATE.md's `product_hues_in_use`]
@@ -38,7 +38,7 @@ justified in Complexity Tracking below — it is never silently skipped.
 
 #### Boundary Gate (Article VI)
 - [ ] `scripts/lint-boundaries.js` passes — no new cross-import between
-      `@tfrc/web` and `@tfrc/app`
+      `@tfrc/marketing` and `@tfrc/product`
 
 #### Reserved Hue Gate (Article V) — *finance/product features only*
 - [ ] Does not use the gain/loss hue bands for anything but market direction
@@ -50,7 +50,7 @@ justified in Complexity Tracking below — it is never silently skipped.
 This feature lives at:
 
 ```
-packages/[foundation|web|app]/src/[...]
+packages/[foundation|marketing|product]/src/[...]
 ```
 
 *(State the actual path. Do not introduce a new top-level directory

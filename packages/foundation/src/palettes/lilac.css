@@ -3,8 +3,8 @@
    NOT imported by any shipped package. See decisions/0003.md.
 
    Behind [data-palette="lilac"] so it can be trialed without touching the
-   default. To make this the active palette, point @tfrc/web's and
-   @tfrc/app's tokens.css imports here instead of meridian.css, and update
+   default. To make this the active palette, point @tfrc/marketing's and
+   @tfrc/product's tokens.css imports here instead of meridian.css, and update
    STATE.md.
    ========================================================================== */
 

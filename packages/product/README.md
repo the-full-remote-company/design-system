@@ -1,7 +1,14 @@
-# @tfrc/app
+# @tfrc/product
 
-The product UI kit. Mobile-first, restrained, built to be used daily for
-years. ~40 components, 44px touch floor, near-zero novelty tolerance.
+The product dialect of the company's visual language. Mobile-first,
+restrained, built to be used daily for years. ~40 components, 44px touch
+floor, near-zero novelty tolerance.
+
+**This package is not an app.** It is the UI kit every product themes over —
+the finance app is a separate repository that installs this package plus
+`themes/finance` (`decisions/0007.md`). Building a product? Read
+`CONSUMING.md` at the repo root. Renamed from `@tfrc/app` because that name
+was read as "the app"; see `decisions/0008.md`.
 
 **Products theme over this layer; they do not fork it.** See
 `src/themes/finance.css` for the pattern — a product theme imports this
@@ -10,7 +17,7 @@ package and adds only what's genuinely product-specific (currently: a
 transaction row, balance card, tab bar — is shared by every product that
 will ever theme over this layer.
 
-Never imports from `@tfrc/web`. If you're tempted to reuse a web component
+Never imports from `@tfrc/marketing`. If you're tempted to reuse a marketing component
 here, that's a sign it belongs in `@tfrc/foundation` instead, and only
 once a third consumer needs it — see `AGENTS.md` rule 4.
 
