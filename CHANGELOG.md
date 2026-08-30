@@ -4,6 +4,27 @@ All notable changes to this repo. Each package also carries its own
 version in `package.json` and in `STATE.md`; this file is the human-
 readable narrative across all of them.
 
+## 1.2.5 — 2026-08-31
+
+Fixes `.github/workflows/publish.yml` itself, not any package. `1.2.4`'s
+attempt to publish `1.0.3` with no `NPM_TOKEN` failed immediately with
+`ENEEDAUTH` — before even attempting a registry write, meaning OIDC was
+never tried at all. Root cause: `actions/setup-node@v4`'s `node-version`
+input controls only the Node binary, not the npm CLI it bundles. Node
+`22.14.0`'s own release notes show no npm version bump, so it almost
+certainly still ships npm 10.x — which has no concept of trusted
+publishing at all. Assuming Node's minimum-supported version implied a
+matching minimum npm version was wrong and went unverified until this
+failure surfaced it.
+
+- **Added** an explicit `npm install -g npm@latest` step immediately after
+  `setup-node`, plus a diagnostic printing both `node --version` and
+  `npm --version` into the log, so this can be confirmed directly in any
+  future run instead of inferred.
+- No package version bump: `1.0.3` never actually reached the registry
+  (the previous failure happened before any write), so this retries the
+  same target version rather than advancing past it again.
+
 ## 1.2.4 — 2026-08-31
 
 No functional change to any package. Second and decisive verification

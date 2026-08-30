@@ -10,7 +10,7 @@ same commit. This file drifting out of sync with reality is the single
 fastest way this repo becomes unmaintainable for the next agent.
 
 ```yaml
-repo_version: 1.2.4
+repo_version: 1.2.5
 last_updated: 2026-08-31
 status: T026 is fully done — see resolved_risks and T025-T027 history in
         specs/002 tasks.md. Mid-T028: migrating off the long-lived
@@ -19,15 +19,19 @@ status: T026 is fully done — see resolved_risks and T025-T027 history in
         NODE_AUTH_TOKEN still present as a fallback — genuinely ambiguous
         evidence, since --provenance signs a Sigstore attestation using
         GitHub's OIDC identity regardless of which credential actually
-        authenticated the registry write, and npmjs.com's UI showed no
-        indication of which path was used either. The NPM_TOKEN GitHub
-        secret has now been deleted entirely (not blanked — removed), and
-        v1.2.4 (1.0.3) is the decisive test: if this publishes with no
-        token secret present at all, OIDC is proven unambiguously; if it
-        fails, the trusted publisher configuration has a real problem,
-        caught here rather than after permanently locking the registry
-        down. Verify against the registry after this tag runs, not just
-        CI's exit code. See decisions/0008.md, 0009.md, and
+        authenticated the registry write. The NPM_TOKEN GitHub secret was
+        then deleted entirely for v1.2.4, which failed immediately with
+        ENEEDAUTH — before any registry write was attempted, meaning OIDC
+        was never even tried. Root cause: Node 22.14.0 (set via
+        setup-node's node-version) almost certainly still bundles npm
+        10.x, which has no concept of OIDC at all; node-version controls
+        only the Node binary, not the npm CLI version, and this went
+        unverified until it failed. v1.2.5 adds an explicit
+        `npm install -g npm@latest` step plus a version-diagnostic log
+        line. NPM_TOKEN remains deleted — this is still the decisive,
+        no-fallback test, now with the actual prerequisite npm version.
+        Verify against the registry after this tag runs, not just CI's
+        exit code. See decisions/0008.md, 0009.md, and
         specs/002-product-consumption-contract/tasks.md T025–T028.
 
 spec_driven_development:
@@ -42,10 +46,12 @@ spec_driven_development:
                              # `specify` CLI against this repo
 
 packages:                     # renamed 2026-08-08 by decisions/0008.md.
-  "@tfrc/foundation": 1.0.3   # target of v1.2.4 — verify against the
-  "@tfrc/marketing":  1.0.3   # registry before trusting this; this is the
-  "@tfrc/product":    1.0.3   # decisive OIDC-only test (no token secret
-                              # exists at all as this was written). 1.0.2
+  "@tfrc/foundation": 1.0.3   # target of v1.2.5 — verify against the
+  "@tfrc/marketing":  1.0.3   # registry before trusting this; v1.2.4's
+  "@tfrc/product":    1.0.3   # attempt at 1.0.3 failed with ENEEDAUTH
+                              # before any registry write (npm CLI version
+                              # gap, now fixed), so this is the same target
+                              # version retried, not a new one. 1.0.2
                               # confirmed live 2026-08-31, but with the
                               # token still present as a fallback, so it
                               # didn't prove OIDC specifically. Old names
@@ -65,25 +71,37 @@ publishing:
   private: false                          # all three, as of 1.2.0
   published_yet: true                     # confirmed on the registry,
                                           # all three at 1.0.2, 2026-08-31.
-                                          # v1.2.4 (1.0.3) is the decisive
-                                          # OIDC-only test — verify before
-                                          # trusting past this line.
+                                          # v1.2.4's attempt at 1.0.3 failed
+                                          # with ENEEDAUTH (npm CLI version
+                                          # gap — see auth note below).
+                                          # v1.2.5 fixes the CLI version and
+                                          # retries the same 1.0.3 target —
+                                          # verify before trusting past
+                                          # this line.
   auth: OIDC (NPM_TOKEN secret deleted)   # mid-migration (T028). Trusted
                                           # publisher configured on npmjs.com
-                                          # for all three packages. The
-                                          # NPM_TOKEN GitHub secret was
-                                          # deleted ahead of v1.2.4 to force
-                                          # an unambiguous test — if that
-                                          # tag's publish succeeds, OIDC is
-                                          # proven and the real npm-side
-                                          # token still needs revoking
-                                          # separately (deleting the GH
-                                          # secret does not revoke it at
-                                          # the source). If it fails, a new
-                                          # token needs generating to
-                                          # restore the fallback while the
-                                          # trusted publisher config is
-                                          # debugged.
+                                          # for all three packages.
+                                          # NPM_TOKEN was deleted ahead of
+                                          # v1.2.4 to force an unambiguous
+                                          # test, which instead surfaced
+                                          # that Node 22.14.0's bundled npm
+                                          # (10.x) predates OIDC support —
+                                          # setup-node's node-version input
+                                          # controls only the Node binary,
+                                          # not the bundled npm CLI version,
+                                          # which went unverified until
+                                          # this failure. v1.2.5 adds an
+                                          # explicit `npm install -g
+                                          # npm@latest` step before
+                                          # publishing. If v1.2.5 succeeds,
+                                          # OIDC is proven and the real
+                                          # npm-side token (still valid,
+                                          # separately from the deleted GH
+                                          # secret) needs revoking on
+                                          # npmjs.com. If it fails again,
+                                          # a new NPM_TOKEN needs generating
+                                          # to restore the fallback while
+                                          # debugging continues.
   pipeline: .github/workflows/publish.yml # tag-triggered, verifies first
   publish_order: [foundation, marketing, product]  # dialects depend on
                                           # an exact foundation version
