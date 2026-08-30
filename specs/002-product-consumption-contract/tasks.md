@@ -92,11 +92,10 @@ enforceable comes before the thing that satisfies it.
 
 ## Not done — needs something this session cannot provide
 
-Listed so the next reader knows these are pending, not overlooked. T026 is
-now done, though its own patch release (1.2.1) needed a follow-up (1.2.2)
-to actually complete — see the note under T026. T027 needs a human action
-this session cannot supply; T028 needs all three packages confirmed live
-at the same version before it can be attempted.
+Listed so the next reader knows these are pending, not overlooked. T026
+and T028 are now done, though both took more attempts than planned — see
+each task's own note for what actually happened. T027 needs a human
+action this session cannot supply.
 
 - [x] **T025** Verify the `@tfrc` npm scope is available. Checked
       2026-08-08 against the public registry: `@tfrc/foundation`,
@@ -146,36 +145,63 @@ at the same version before it can be attempted.
 - [ ] **T027** Prove SC-001 the only way it can be proven — have someone
       who has not read this repo build a styled page from `CONSUMING.md`
       alone. Until then, SC-001 is asserted, not measured.
-- [ ] **T028** Migrate off the long-lived `NPM_TOKEN` to npm's trusted
-      publishing (OIDC) once T026's first publish has succeeded and all
-      three packages exist on the registry. Cannot be done before T026 —
-      trusted publishing is configured per-package under an *existing*
-      package's settings on npmjs.com, so there's a hard bootstrap
-      ordering here: token first, OIDC second, never the reverse. Steps,
-      once packages exist:
-      1. Bump `.github/workflows/publish.yml`'s `node-version` from `20`
-         to `22.14.0` or later — trusted publishing requires npm ≥ 11.5.1,
-         which ships with Node ≥ 22.14, not Node 20's bundled npm 10.
-      2. For each of the three packages on npmjs.com: Settings → Trusted
-         Publisher → GitHub Actions → organization
-         `the-full-remote-company`, repository `design-system`, workflow
-         filename `publish.yml` (filename only, not the full path).
-      3. Confirm `permissions: id-token: write` is already present in
-         `publish.yml` (it is, for provenance) — OIDC reuses it.
-      4. Publish a subsequent patch/minor release and confirm it succeeds
-         via OIDC with no `NODE_AUTH_TOKEN` needed.
-      5. On npmjs.com, per package: Settings → Publishing access →
-         "Require two-factor authentication and disallow tokens".
-      6. Revoke the `NPM_TOKEN` value on npmjs.com and delete the
-         `NPM_TOKEN` GitHub repository secret.
-      7. Update `decisions/0009.md`'s Consequences and `STATE.md`'s
-         `publishing` block to record OIDC as the auth mechanism, since
-         both currently describe a token-based pipeline.
-      Rationale: a long-lived write token to a public scope is a standing
-      credential-exposure risk (CI logs, cache poisoning, a compromised
-      dependency in the workflow) for as long as it exists. OIDC issues a
-      short-lived, workflow-scoped credential per run instead, and
-      generates provenance automatically without needing `--provenance`.
+- [x] **T028** Done 2026-08-31. Migrated off the long-lived `NPM_TOKEN` to
+      npm's trusted publishing (OIDC), following the plan below with two
+      real deviations along the way — recorded because the plan as
+      written was incomplete on two points that only surfaced by actually
+      running it, not from re-reading the docs harder:
+      1. Bumped `.github/workflows/publish.yml`'s `node-version` to
+         `22.14.0`. **This alone was insufficient** — Node's `node-version`
+         input controls only the Node binary, not the npm CLI it bundles,
+         and `22.14.0` still ships npm `10.9.2`, which predates OIDC
+         entirely. Confirmed the hard way: with `NPM_TOKEN` deleted,
+         `v1.2.4`'s publish failed with `ENEEDAUTH` *before any registry
+         write was attempted* — npm 10.x never even tried OIDC. Fixed by
+         adding an explicit npm upgrade step. First attempt at that step,
+         `npm install -g npm@latest`, itself failed with `EBADENGINE` on
+         `v1.2.5` — current `npm@latest` (`12.0.2`) requires Node
+         `>=22.22.2`, newer than the Node version pinned for OIDC's
+         *minimum*. Two independent version constraints, wrongly treated
+         as one. Fixed in `v1.2.6` by pinning `npm@11.5.1` exactly — the
+         documented OIDC minimum — after checking its own `engines` field
+         (`^20.17.0 || >=22.9.0`) against the pinned Node version first,
+         rather than assuming compatibility again.
+      2. Configured a trusted publisher (GitHub Actions, organization
+         `the-full-remote-company`, repo `design-system`, workflow
+         `publish.yml`) for all three packages on npmjs.com.
+      3. `permissions: id-token: write` was already present.
+      4. **Proven, not assumed:** `v1.2.3` published `1.0.2` successfully
+         with a trusted publisher configured *and* `NODE_AUTH_TOKEN` still
+         wired as a fallback — genuinely ambiguous evidence, since
+         `--provenance` signs a Sigstore attestation using GitHub's OIDC
+         identity regardless of which credential actually authenticated
+         the registry write. Unambiguous proof required the fallback
+         removed entirely: `NPM_TOKEN` was deleted from GitHub ahead of
+         `v1.2.4`, and after the two npm-version failures above,
+         `v1.2.6` published `1.0.3` successfully with **no token existing
+         anywhere** — confirmed against the registry directly, not just
+         CI's exit code.
+      5. Set "Require two-factor authentication and disallow tokens" on
+         all three packages' Publishing access — done only after step 4's
+         proof, deliberately, per the lesson recorded under T026: setting
+         this before OIDC is confirmed working is what caused that
+         incident's lockout in the first place.
+      6. Revoked the `NPM_TOKEN` value on npmjs.com directly, not just the
+         GitHub secret — deleting the GitHub secret only stops the
+         workflow from *reading* it; the token itself remains a valid,
+         separately-revocable credential until revoked at npm's end.
+      7. Updated `decisions/0009.md`'s Consequences (dated addendum, not a
+         rewrite — `AGENTS.md` rule 7) and `STATE.md`'s `publishing`
+         block. `publish.yml` itself was also cleaned up: the now-dead
+         `NODE_AUTH_TOKEN` env var was removed from all three publish
+         steps, since leaving it wired would misleadingly imply a token
+         fallback still exists when Publishing access now disallows one
+         outright.
+      Full narrative, including the exact failing log lines: `CHANGELOG.md`'s
+      `1.2.3`–`1.2.7` entries. Rationale unchanged from the original plan:
+      a long-lived write token to a public scope is a standing
+      credential-exposure risk for as long as it exists; OIDC issues a
+      short-lived, workflow-scoped credential per run instead.
 
 ## Verification against spec.md
 

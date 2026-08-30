@@ -5,30 +5,23 @@ name: publish
 #
 # To release: bump the versions in packages/*/package.json, update
 # CHANGELOG.md and STATE.md in the same commit, then tag and push, e.g.:
-#   git tag v1.2.2 && git push origin v1.2.2
+#   git tag v1.2.7 && git push origin v1.2.7
 #
-# Requires an npm automation token in the repo secret NPM_TOKEN, with
-# publish rights to the @tfrc scope — OR trusted publishing (OIDC)
-# configured per-package on npmjs.com. As of v1.2.4, NPM_TOKEN has been
-# deleted entirely: this repo is now testing OIDC-only publishing. If that
-# secret doesn't exist, NODE_AUTH_TOKEN below resolves to an empty string,
-# which is harmless — npm falls through to OIDC when a registry token
-# isn't present.
+# Publishes via npm trusted publishing (OIDC) — no repository secret at
+# all. Each package's npmjs.com settings name this exact workflow
+# (organization the-full-remote-company, repo design-system, workflow
+# publish.yml) as its trusted publisher, and Publishing access is set to
+# "Require two-factor authentication and disallow tokens" — so a token
+# COULD NOT authenticate here even if one existed. This is the completed
+# state of specs/002-product-consumption-contract/tasks.md T028; see that
+# file and CHANGELOG.md's 1.2.3–1.2.7 entries for the migration's full
+# history, including two CI-tooling failures (npm CLI version mismatches)
+# that had nothing to do with OIDC itself.
 #
-# This is a deliberate first-publish bootstrap, not the long-term shape.
-# Trusted publishing (OIDC) removes the need for NPM_TOKEN entirely, but it
-# can only be configured per-package on npmjs.com AFTER a package exists —
-# so token-based publishing has to happen once before OIDC can replace it.
-# T026 published all three at 1.0.1 on 2026-08-31; migrating to OIDC is now
-# in progress. See specs/002-product-consumption-contract/tasks.md T028
-# for the exact migration steps and current status.
-#
-# v1.2.4 failed with ENEEDAUTH once NPM_TOKEN was removed: npm 10.x (what
-# Node 22.14.0 actually bundles — the node-version input controls only the
-# Node binary, not npm) has no concept of OIDC at all, so it never even
-# attempted trusted publishing. The "Ensure npm supports trusted
-# publishing" step below upgrades npm explicitly rather than trusting
-# whatever Node happens to bundle.
+# Trusted publishing requires npm >= 11.5.1. setup-node's node-version
+# input controls only the Node BINARY, not the npm CLI version it
+# bundles, so npm is pinned explicitly below rather than trusted to
+# whatever a given Node version happens to ship with.
 
 on:
   push:
@@ -37,7 +30,7 @@ on:
 
 permissions:
   contents: read
-  id-token: write # npm provenance
+  id-token: write # required for OIDC trusted publishing and provenance
 
 jobs:
   verify:
@@ -60,25 +53,16 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          # Trusted publishing (OIDC) requires npm >= 11.5.1. Node's
-          # node-version input only controls the Node BINARY — it does not
-          # guarantee a matching bundled npm, and Node 22.14.0's release
-          # notes show no npm version bump, so it almost certainly still
-          # ships npm 10.x. That's what caused v1.2.4 to fail with
-          # ENEEDAUTH the moment NPM_TOKEN was removed: npm 10.x has no
-          # concept of OIDC at all, so it never even attempted it — it
-          # went straight to "no credential found." setup-node@v4 has no
-          # npm-version input, so npm must be upgraded explicitly below.
           node-version: "22.14.0"
           registry-url: "https://registry.npmjs.org"
       - name: Ensure npm supports trusted publishing (OIDC)
         run: |
-          # Pinned, not @latest: npm 12.x requires Node >=22.22.2, which is
-          # newer than the 22.14.0 pinned above, and installing @latest
-          # failed with EBADENGINE on v1.2.5's attempt. npm 11.5.1 is the
-          # documented minimum for OIDC and its own engines field
-          # (^20.17.0 || >=22.9.0) is compatible with 22.14.0 — verified
-          # against the published package manifest before pinning here.
+          # Pinned exactly, not @latest: npm's engines requirements move
+          # independently of Node's, and a floating @latest can outrun
+          # whichever Node version is pinned above (this happened once —
+          # see CHANGELOG's 1.2.5/1.2.6 entries). npm 11.5.1 is the
+          # documented OIDC minimum; its own engines field
+          # (^20.17.0 || >=22.9.0) is compatible with 22.14.0 above.
           npm install -g npm@11.5.1
           echo "node: $(node --version)"
           echo "npm:  $(npm --version)"
@@ -89,18 +73,13 @@ jobs:
       # registry before publishing. GitHub Actions retries ("Re-run failed
       # jobs") re-run the WHOLE job from its first step, not just the step
       # that failed — so without this check, any partial failure after the
-      # first package succeeds (an interrupted publish, a per-package
-      # setting that needed fixing, a transient registry error) becomes
-      # unrecoverable without a version bump, because retrying re-fails on
-      # the package that already succeeded before it ever reaches the one
-      # that didn't. This happened publishing 1.0.1 of all three: a
-      # publishing-access setting blocked product, and every retry re-hit
-      # foundation's already-published version first. See
-      # specs/002-product-consumption-contract/tasks.md T026's note.
+      # first package succeeds becomes unrecoverable without a version
+      # bump, because retrying re-fails on the package that already
+      # succeeded before it ever reaches the one that didn't. See
+      # specs/002-product-consumption-contract/tasks.md T026's note for
+      # the incident that made this necessary.
       - name: Publish @tfrc/foundation
         working-directory: packages/foundation
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           PKG_VERSION=$(node -p "require('./package.json').version")
           if npm view "@tfrc/foundation@$PKG_VERSION" version >/dev/null 2>&1; then
@@ -110,8 +89,6 @@ jobs:
           fi
       - name: Publish @tfrc/marketing
         working-directory: packages/marketing
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           PKG_VERSION=$(node -p "require('./package.json').version")
           if npm view "@tfrc/marketing@$PKG_VERSION" version >/dev/null 2>&1; then
@@ -121,8 +98,6 @@ jobs:
           fi
       - name: Publish @tfrc/product
         working-directory: packages/product
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           PKG_VERSION=$(node -p "require('./package.json').version")
           if npm view "@tfrc/product@$PKG_VERSION" version >/dev/null 2>&1; then

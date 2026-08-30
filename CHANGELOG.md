@@ -4,6 +4,35 @@ All notable changes to this repo. Each package also carries its own
 version in `package.json` and in `STATE.md`; this file is the human-
 readable narrative across all of them.
 
+## 1.2.7 — 2026-08-31
+
+Closes out `specs/002-product-consumption-contract` T028. `1.2.6` proved
+OIDC works with no token existing anywhere. Ahead of this tag, each
+package's npmjs.com Publishing access was set to "Require two-factor
+authentication and disallow tokens" — the strict setting that caused an
+earlier lockout when it was set *before* OIDC was confirmed working (see
+`1.2.1`'s incident) — and the npm-side `NPM_TOKEN` value was revoked
+directly, not just removed from GitHub. This release confirms the fully
+locked-down end state still publishes correctly, and cleans up
+`.github/workflows/publish.yml`: the now-dead `NODE_AUTH_TOKEN` env var is
+removed from all three publish steps (Publishing access makes a token
+unusable here regardless, so leaving it wired would misleadingly imply a
+fallback still exists), and the top-of-file comment block now describes
+OIDC as the actual mechanism instead of a bootstrap-in-progress.
+
+`decisions/0009.md` gets a dated addendum (not a rewrite — `AGENTS.md`
+rule 7) recording OIDC as the auth mechanism. All three packages bump to
+`1.0.4` to force the confirmation publish, for the same reason every prior
+release in this sequence needed a real version bump: skip-if-already-
+published logic means retagging at a live version proves nothing.
+
+T028 is done. The full migration took five tagged releases (`1.2.3`
+through `1.2.7`) against a seven-step plan that looked complete on paper —
+two of those releases exist purely because the plan didn't anticipate
+that Node's `node-version` doesn't pin npm's version, and that `npm@latest`
+is itself a moving target that can outrun a pinned Node version. Neither
+failure had anything to do with OIDC or npmjs.com configuration.
+
 ## 1.2.6 — 2026-08-31
 
 Fixes `.github/workflows/publish.yml` again, not any package. `1.2.5`'s

@@ -10,26 +10,24 @@ same commit. This file drifting out of sync with reality is the single
 fastest way this repo becomes unmaintainable for the next agent.
 
 ```yaml
-repo_version: 1.2.6
+repo_version: 1.2.7
 last_updated: 2026-08-31
-status: T026 is fully done — see resolved_risks and T025-T027 history in
-        specs/002 tasks.md. Mid-T028: migrating off the long-lived
-        NPM_TOKEN to npm trusted publishing (OIDC), NPM_TOKEN deleted since
-        v1.2.4. Two CI-only failures since, both fixed forward rather than
-        by restoring the token: v1.2.4 failed with ENEEDAUTH because Node
-        22.14.0 (set via setup-node's node-version, which controls only
-        the Node binary) bundles npm 10.x, predating OIDC entirely.
-        v1.2.5's fix — `npm install -g npm@latest` — itself failed with
-        EBADENGINE, because npm's current latest (12.0.2) requires Node
-        >=22.22.2, newer than what's pinned. v1.2.6 pins an exact
-        `npm@11.5.1` instead (checked its own engines field against
-        22.14.0 first) — the documented OIDC minimum, not a moving
-        target. Full narrative in CHANGELOG.md's 1.2.4-1.2.6 entries. No
-        package version bump since 1.0.2: 1.0.3 has never reached the
-        registry across three attempts, all CI/tooling failures before
-        any registry write. Verify against the registry after this tag
-        runs, not just CI's exit code. See decisions/0008.md, 0009.md, and
-        specs/002-product-consumption-contract/tasks.md T025–T028.
+status: All three packages are LIVE on npm, published via trusted
+        publishing (OIDC) exclusively — proven, not assumed: v1.2.6
+        published 1.0.3 with NO npm token existing anywhere (GitHub secret
+        deleted, npm-side token revoked), and v1.2.7 confirms the fully
+        locked-down state (Publishing access: "Require two-factor
+        authentication and disallow tokens" on all three packages) still
+        works. T026 and T028 are both fully done — see
+        specs/002-product-consumption-contract/tasks.md for the complete
+        history, including two CI-tooling failures along the way (Node
+        22.14.0 bundles npm 10.x, which predates OIDC; a subsequent
+        `npm@latest` fix had its own Node-version mismatch) — neither was
+        an OIDC or npmjs.com configuration problem. CHANGELOG.md's
+        1.2.0–1.2.7 entries carry the full narrative. Only T027 remains
+        open: proving SC-001 by having someone unfamiliar with this repo
+        build a page from CONSUMING.md alone. See decisions/0008.md and
+        0009.md (dated addendum recording the OIDC migration).
 
 spec_driven_development:
   adopted: true
@@ -43,17 +41,14 @@ spec_driven_development:
                              # `specify` CLI against this repo
 
 packages:                     # renamed 2026-08-08 by decisions/0008.md.
-  "@tfrc/foundation": 1.0.3   # target of v1.2.6 — verify against the
-  "@tfrc/marketing":  1.0.3   # registry before trusting this. Three prior
-  "@tfrc/product":    1.0.3   # attempts at 1.0.3 (v1.2.4, v1.2.5) both
-                              # failed in CI tooling before any registry
-                              # write, so this is the same target retried
-                              # again, not a new one. 1.0.2 confirmed live
-                              # 2026-08-31, but with the token still
-                              # present as a fallback, so it didn't prove
-                              # OIDC specifically. Old names were never
-                              # published, so 1.0.0 under the new names
-                              # was a first release, not a successor.
+  "@tfrc/foundation": 1.0.4   # target of v1.2.7, published via OIDC with
+  "@tfrc/marketing":  1.0.4   # Publishing access fully locked down
+  "@tfrc/product":    1.0.4   # (tokens disallowed at the registry, not
+                              # just absent from CI) — verify against the
+                              # registry before trusting this if it's been
+                              # a while. Old names were never published,
+                              # so 1.0.0 under the new names was a first
+                              # release, not a successor.
 
 publishing:
   registry: https://registry.npmjs.org   # public. decisions/0009.md
@@ -66,37 +61,31 @@ publishing:
   license: MIT                            # LICENSE at repo root
   private: false                          # all three, as of 1.2.0
   published_yet: true                     # confirmed on the registry,
-                                          # all three at 1.0.2, 2026-08-31.
-                                          # 1.0.3 has failed three times
-                                          # (v1.2.4 ENEEDAUTH, v1.2.5
-                                          # EBADENGINE), always in CI
-                                          # tooling before any registry
-                                          # write. v1.2.6 verify before
-                                          # trusting past this line.
-  auth: OIDC (NPM_TOKEN secret deleted)   # mid-migration (T028). Trusted
-                                          # publisher configured on npmjs.com
-                                          # for all three packages.
-                                          # NPM_TOKEN deleted ahead of
-                                          # v1.2.4. Two CI-tooling failures
-                                          # since (see CHANGELOG's 1.2.4-
-                                          # 1.2.6 entries for the full
-                                          # narrative): Node 22.14.0 bundles
-                                          # npm 10.x, which predates OIDC;
-                                          # v1.2.5's fix to `npm@latest`
-                                          # itself failed because latest
-                                          # npm (12.x) needs Node >=22.22.2.
-                                          # v1.2.6 pins npm@11.5.1 exactly —
-                                          # the documented OIDC minimum,
-                                          # checked against its own engines
-                                          # field first. If v1.2.6 succeeds,
-                                          # OIDC is proven and the real
-                                          # npm-side token (still valid,
-                                          # separately from the deleted GH
-                                          # secret) needs revoking on
-                                          # npmjs.com. If it fails again,
-                                          # a new NPM_TOKEN needs generating
-                                          # to restore the fallback while
-                                          # debugging continues.
+                                          # all three at 1.0.4 via OIDC,
+                                          # 2026-08-31.
+  auth: OIDC only (trusted publishing)    # T028 complete. No NPM_TOKEN
+                                          # exists on GitHub OR npmjs.com —
+                                          # both revoked. Each package's
+                                          # npmjs.com Publishing access is
+                                          # "Require two-factor
+                                          # authentication and disallow
+                                          # tokens", so a token literally
+                                          # cannot authenticate here even
+                                          # if one existed. Trusted
+                                          # publisher: GitHub Actions,
+                                          # the-full-remote-company/
+                                          # design-system, workflow
+                                          # publish.yml. Proven by v1.2.6
+                                          # (1.0.3 published with zero
+                                          # tokens anywhere) and confirmed
+                                          # again by v1.2.7 under the fully
+                                          # locked-down setting. Full
+                                          # migration history, including
+                                          # two CI-tooling failures
+                                          # unrelated to OIDC itself, in
+                                          # CHANGELOG.md's 1.2.3–1.2.7
+                                          # entries and specs/002
+                                          # tasks.md's T028.
   pipeline: .github/workflows/publish.yml # tag-triggered, verifies first
   publish_order: [foundation, marketing, product]  # dialects depend on
                                           # an exact foundation version
@@ -172,14 +161,20 @@ resolved_risks:
     whichever account first publishes to it" — that was wrong for a scope
     this specific; a scope is granted only by registering a user or org of
     that exact name. Corrected in specs/002 tasks.md T025.)
+  - publishing no longer depends on a long-lived NPM_TOKEN. specs/002 T028
+    migrated to npm trusted publishing (OIDC), completed and proven
+    2026-08-31: v1.2.6 published with no token existing anywhere (GitHub
+    secret deleted, npm-side token revoked), and Publishing access on all
+    three packages is set to disallow tokens entirely, not just lack one.
+    The migration took more attempts than planned — two CI-tooling
+    failures (Node 22.14.0 bundles npm 10.x, which predates OIDC; a
+    subsequent npm-upgrade fix had its own Node-version mismatch) — see
+    CHANGELOG.md's 1.2.3–1.2.7 entries and specs/002 tasks.md's T028 for
+    the full narrative.
 
 known_gaps_for_v1.3:             # intentionally out of scope, not
                                  # forgotten. Don't silently re-decide these —
                                  # open an ADR first if you're tackling one.
-  - publishing authenticates with a long-lived NPM_TOKEN, not trusted
-    publishing (OIDC). Deliberate bootstrap ordering, not an oversight —
-    OIDC can only be configured on a package that already exists, and now
-    does (T026 done). Migrate per specs/002 tasks.md T028.
   - packages are published (T026 done, 2026-08-30) but FR-001 is still
     unproven in the sense that matters: no real consumer has installed a
     real package yet (see CONSUMERS.md, still "none yet"). T027 tracks

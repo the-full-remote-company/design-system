@@ -92,6 +92,22 @@ against fixtures in `scripts/fixtures/`, and runs in CI.
   triggered), so releasing is a deliberate, tagged act with a provenance
   trail rather than someone's laptop running `npm publish`.
 
+**Update, 2026-08-31:** the pipeline above originally authenticated with a
+long-lived `NPM_TOKEN` repository secret, described as a deliberate
+first-publish bootstrap rather than the end state, since npm's trusted
+publishing (OIDC) can only be configured on a package that already exists.
+Once all three packages were live (`specs/002-product-consumption-contract`
+T026), that migration happened (T028): the workflow now authenticates via
+OIDC exclusively, each package's npmjs.com settings name this exact
+workflow as its sole trusted publisher, and Publishing access is set to
+"Require two-factor authentication and disallow tokens" — so no token
+could authenticate here even if one existed. `NPM_TOKEN` has been deleted
+from both GitHub and npmjs.com. This removes the standing credential-
+exposure risk noted nowhere explicitly above but implicit in "a long-lived
+write token to a public scope" — see `CHANGELOG.md`'s `1.2.3`–`1.2.7`
+entries for the full migration, including two CI-tooling failures (npm CLI
+version mismatches unrelated to OIDC itself) encountered along the way.
+
 ## Alternatives considered
 
 - **GitHub Packages, private to the org.** Genuinely appealing: keeps the
