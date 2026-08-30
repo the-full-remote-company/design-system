@@ -1,0 +1,10 @@
+/* NOT a rule violation in the moral sense — a precondition failure.
+   This repo has a manifest but has adopted neither dialect, so there is
+   nothing to verify. The checker says so explicitly rather than exiting 0,
+   because a silent pass here is indistinguishable from a real pass and
+   would let a repo believe it is covered when the checker never had
+   anything to check. See CONSUMING.md's NO_DIALECT row. */
+.page {
+  margin: 0 auto;
+  max-width: 60rem;
+}

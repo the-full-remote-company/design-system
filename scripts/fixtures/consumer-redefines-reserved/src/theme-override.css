@@ -1,0 +1,13 @@
+/* VIOLATION (Article V): a product consumer may USE the reserved
+   market-direction tokens — that is what they are for — but may never
+   REDEFINE them. Redefining is how "green means up" quietly becomes
+   product-specific, which is the exact failure decisions/0002.md exists to
+   prevent. This fixture is the product-dialect counterpart to
+   consumer-reserved-color, which covers a marketing consumer merely
+   referencing them. */
+@import "@tfrc/product/themes/finance";
+
+:root {
+  --color-gain: var(--color-accent);
+  --color-loss: var(--color-text-secondary);
+}

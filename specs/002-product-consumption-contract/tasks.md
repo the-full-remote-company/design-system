@@ -92,27 +92,67 @@ enforceable comes before the thing that satisfies it.
 
 ## Not done — needs something this session cannot provide
 
-Listed so the next reader knows these are pending, not overlooked.
+Listed so the next reader knows these are pending, not overlooked. T026 and
+T027 need a human credential/action this session cannot supply; T028 needs
+T026 to have already succeeded, so it cannot even be attempted yet.
 
 - [x] **T025** Verify the `@tfrc` npm scope is available. Checked
       2026-08-08 against the public registry: `@tfrc/foundation`,
       `@tfrc/marketing`, `@tfrc/product` all 404, and
       `registry.npmjs.org/-/org/tfrc/package` returns "Scope not found" —
       the scope itself, not just those three names, is unclaimed. See
-      `STATE.md`'s `resolved_risks`. **Caveat:** npm scopes are
-      first-come, claimed automatically on first publish — this is a
-      point-in-time check, not a reservation, so re-verify immediately
-      before T026 if significant time has passed.
-- [ ] **T026** Add the `NPM_TOKEN` repository secret with publish rights to
-      the `@tfrc` scope, then tag `v1.2.0` to perform the first real
-      publish. Until this happens, FR-001 is implemented but unproven: no
-      consumer can install anything yet. **Now the only remaining blocker**
-      on a consumer repo actually being able to install `@tfrc/marketing`
-      or `@tfrc/product` — needs a human with publish credentials, not
-      further design work.
+      `STATE.md`'s `resolved_risks`. **Correction (2026-08-31):** the
+      original caveat here — "claimed automatically on first publish" — is
+      wrong for `@tfrc` specifically. Per npm's own docs, a scope is
+      granted when you register a user or organization of that exact name;
+      it is not squatted by whoever publishes into it first. `@tfrc` is
+      unusable until an npm organization literally named `tfrc` is
+      created — see T026. Re-verify availability immediately before
+      creating it if significant time has passed.
+- [ ] **T026** Create the npm organization `tfrc` (required — the `@tfrc`
+      scope does not exist until this org does, regardless of package
+      availability; see T025's correction), enable 2FA on the account that
+      owns it, then add a granular access token with **Read and write**
+      on the `@tfrc` scope (not just "Organizations" access, which does
+      *not* grant publish rights) as the `NPM_TOKEN` repository secret.
+      Tag `v1.2.0` to perform the first real publish. Until this happens,
+      FR-001 is implemented but unproven: no consumer can install anything
+      yet. **Now the only remaining blocker** on a consumer repo actually
+      being able to install `@tfrc/marketing` or `@tfrc/product` — needs a
+      human with publish credentials, not further design work.
 - [ ] **T027** Prove SC-001 the only way it can be proven — have someone
       who has not read this repo build a styled page from `CONSUMING.md`
       alone. Until then, SC-001 is asserted, not measured.
+- [ ] **T028** Migrate off the long-lived `NPM_TOKEN` to npm's trusted
+      publishing (OIDC) once T026's first publish has succeeded and all
+      three packages exist on the registry. Cannot be done before T026 —
+      trusted publishing is configured per-package under an *existing*
+      package's settings on npmjs.com, so there's a hard bootstrap
+      ordering here: token first, OIDC second, never the reverse. Steps,
+      once packages exist:
+      1. Bump `.github/workflows/publish.yml`'s `node-version` from `20`
+         to `22.14.0` or later — trusted publishing requires npm ≥ 11.5.1,
+         which ships with Node ≥ 22.14, not Node 20's bundled npm 10.
+      2. For each of the three packages on npmjs.com: Settings → Trusted
+         Publisher → GitHub Actions → organization
+         `the-full-remote-company`, repository `design-system`, workflow
+         filename `publish.yml` (filename only, not the full path).
+      3. Confirm `permissions: id-token: write` is already present in
+         `publish.yml` (it is, for provenance) — OIDC reuses it.
+      4. Publish a subsequent patch/minor release and confirm it succeeds
+         via OIDC with no `NODE_AUTH_TOKEN` needed.
+      5. On npmjs.com, per package: Settings → Publishing access →
+         "Require two-factor authentication and disallow tokens".
+      6. Revoke the `NPM_TOKEN` value on npmjs.com and delete the
+         `NPM_TOKEN` GitHub repository secret.
+      7. Update `decisions/0009.md`'s Consequences and `STATE.md`'s
+         `publishing` block to record OIDC as the auth mechanism, since
+         both currently describe a token-based pipeline.
+      Rationale: a long-lived write token to a public scope is a standing
+      credential-exposure risk (CI logs, cache poisoning, a compromised
+      dependency in the workflow) for as long as it exists. OIDC issues a
+      short-lived, workflow-scoped credential per run instead, and
+      generates provenance automatically without needing `--provenance`.
 
 ## Verification against spec.md
 

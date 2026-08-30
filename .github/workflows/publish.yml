@@ -9,6 +9,14 @@ name: publish
 #
 # Requires an npm automation token in the repo secret NPM_TOKEN, with
 # publish rights to the @tfrc scope.
+#
+# This is a deliberate first-publish bootstrap, not the long-term shape.
+# Trusted publishing (OIDC) removes the need for NPM_TOKEN entirely, but it
+# can only be configured per-package on npmjs.com AFTER a package exists —
+# so token-based publishing has to happen once before OIDC can replace it.
+# See specs/002-product-consumption-contract/tasks.md T028 for the exact
+# migration steps once this workflow has published successfully at least
+# once.
 
 on:
   push:

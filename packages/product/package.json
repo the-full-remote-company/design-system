@@ -2,7 +2,7 @@
   "name": "@tfrc/product",
   "version": "1.0.0",
   "license": "MIT",
-  "description": "The product dialect of the visual language — application UI. Mobile-first, ~40 components, 44px touch floor. Products theme over this layer; they do not fork it. Never imports from @tfrc/marketing.",
+  "description": "The product dialect of the visual language — application UI. Mobile-first, ~23 components, 44px touch floor. A deliberately small set (button, field, list/row, balance, amount, pill, segmented control, tabs) that products theme over and extend locally; they do not fork it. Never imports from @tfrc/marketing.",
   "keywords": ["design-system", "design-tokens", "css", "tailwind", "product-ui"],
   "repository": {
     "type": "git",

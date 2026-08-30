@@ -1,8 +1,14 @@
 # @tfrc/product
 
 The product dialect of the company's visual language. Mobile-first,
-restrained, built to be used daily for years. ~40 components, 44px touch
+restrained, built to be used daily for years. ~23 components, 44px touch
 floor, near-zero novelty tolerance.
+
+The set is deliberately small: button, field, list/row, balance, amount,
+pill, segmented control, tabs. It covers the spine of an application UI and
+stops there. A product that needs something else builds it locally on these
+tokens and promotes it here on the third identical use (`AGENTS.md` rule 4)
+— the count grows from real demand, never from anticipating it.
 
 **This package is not an app.** It is the UI kit every product themes over —
 the finance app is a separate repository that installs this package plus

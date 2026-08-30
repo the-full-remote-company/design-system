@@ -100,12 +100,16 @@ It reports:
 
 | Code | Meaning | Fix |
 |---|---|---|
+| `NO_MANIFEST` | No `package.json` was found where you ran it | Run it from your repo root. The checker reads your manifest to learn which dialect and version you adopted. |
+| `NO_DIALECT` | Neither dialect is installed or imported | Add exactly one, as an exact-version dependency. Expected in a repo that hasn't adopted the system yet — it means "nothing to verify", not "something is broken". |
 | `MIXED_DIALECT` | You have both dialects installed or imported | Remove one. If you genuinely need both looks, you have two products, not one. |
 | `RESERVED_TOKEN` | A marketing consumer referenced `--color-gain`/`--color-loss` | Use `--color-success`/`--color-danger` if you mean status, or an accent if you mean decoration. |
 | `RESERVED_REDEFINE` | You redefined a reserved token | Never redefine it. Use it, or use a different token. |
 | `RESERVED_HUE` | A raw `oklch()` value sits in the reserved gain/loss hue band | Pick a hue outside 130–170 and 5–40, and use a token. |
 | `RAW_VALUE` | A hex/`rgb()`/`oklch()` literal in your source | Use the token that means what you want. If none exists, open an issue on this repo — do not invent a local value. |
 | `VERSION_PIN` | A `@tfrc/*` dependency uses a range like `^1.0.0` | Pin it exactly, so your appearance never changes without a decision. |
+
+Exit codes: `0` compliant, `1` violations found, `2` usage error.
 
 ### The escape hatch, and why it is loud
 

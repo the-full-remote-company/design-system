@@ -1,0 +1,8 @@
+/* Precondition failure: this directory deliberately has NO package.json.
+   The checker cannot learn which dialect or which version was adopted, so
+   it reports NO_MANIFEST rather than guessing from source imports alone.
+   Most often this means someone ran `npx tfrc-verify` from a subdirectory
+   instead of their repo root. See CONSUMING.md's NO_MANIFEST row. */
+.page {
+  color: var(--color-text-primary);
+}

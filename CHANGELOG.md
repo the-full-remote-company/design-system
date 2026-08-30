@@ -4,7 +4,7 @@ All notable changes to this repo. Each package also carries its own
 version in `package.json` and in `STATE.md`; this file is the human-
 readable narrative across all of them.
 
-## 1.2.0 — 2026-08-08
+## 1.2.0 — 2026-08-31
 
 Products can now be built. The two dialect packages were renamed to say
 what they actually are, all three packages became publishable, and the
@@ -28,11 +28,16 @@ it cost nothing was about to close. See `decisions/0008.md`.
   and unpinned versions — the rules this repo's own lints cannot see once
   packages are installed from a registry. `decisions/0009.md`.
 - **Added** `scripts/test-verify-consumer.js` and `scripts/fixtures/` —
-  five deliberately-broken consumer repos proving each rule actually
-  fails. Wired into CI, because a governance check nobody has watched fail
-  is indistinguishable from one that always passes.
+  eight miniature consumer repos covering every violation code the checker
+  can emit, asserting the exact codes each produces. Five break a rule on
+  purpose, two cover preconditions (no manifest, no dialect adopted), one
+  is compliant. Wired into CI, because a governance check nobody has
+  watched fail is indistinguishable from one that always passes.
 - **Added** `CONSUMING.md` (how an outside repo adopts the language) and
-  `CONSUMERS.md` (who has adopted it, and on what version).
+  `CONSUMERS.md` (who has adopted it, and on what version). `CONSUMING.md`
+  documents all eight violation codes and the three exit codes, including
+  `NO_DIALECT` — which is the first thing a repo that has not yet adopted
+  the system will see.
 - **Added** `LICENSE` (MIT) and `.github/workflows/publish.yml`, a
   tag-triggered release that re-runs every check before publishing.
 - **Changed** all three packages: `"private": true` removed, plus
@@ -51,6 +56,15 @@ it cost nothing was about to close. See `decisions/0008.md`.
   product. This was the documentation fix `decisions/0007.md` identified
   as the real problem and never carried out; the same misreading recurred
   three days later, which is what triggered the rename.
+- **Fixed** the component count for `@tfrc/product`, which claimed "~40
+  components" in five places while shipping 23 selectors across 8 families
+  (button, field, list/row, balance, amount, pill, segmented control,
+  tabs). Corrected in `packages/product/package.json`,
+  `packages/product/README.md`, `ARCHITECTURE.md` and `README.md`; the
+  marketing dialect's "~14" was checked against the same convention and is
+  accurate. Caught while preparing the first publish. An inflated count
+  invites a consumer to assume a component exists and find out otherwise
+  mid-build, so it is corrected before anyone can install it.
 - **Fixed** a false claim in `specs/002-product-consumption-contract/spec.md`:
   it stated its review checklist was "run and passing" while
   `checklist.md` did not exist. The checklist now exists, has been run,

@@ -7,7 +7,7 @@ the same time, without either one dragging on the other.
 ```
 @tfrc/foundation      ← tokens, contract, reset, tfrc-verify. Nothing user-facing.
    ├── @tfrc/marketing ← persuade a stranger once. Expressive, desktop-first, ~14 components.
-   └── @tfrc/product   ← serve a returning user for years. Restrained, mobile-first, ~40 components.
+   └── @tfrc/product   ← serve a returning user for years. Restrained, mobile-first, ~23 components.
                           └── themes/finance.css  ← the first product theme.
 ```
 

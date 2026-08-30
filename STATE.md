@@ -11,7 +11,7 @@ fastest way this repo becomes unmaintainable for the next agent.
 
 ```yaml
 repo_version: 1.2.0
-last_updated: 2026-08-08
+last_updated: 2026-08-31
 status: Two dialect packages renamed, all three made publishable, and
         consumer-side verification shipped. No token, palette, theme or
         component changed. See decisions/0008.md and 0009.md. The "@tfrc"
@@ -41,11 +41,22 @@ packages:                     # renamed 2026-08-08 by decisions/0008.md.
 
 publishing:
   registry: https://registry.npmjs.org   # public. decisions/0009.md
-  scope: "@tfrc"
+  scope: "@tfrc"                          # requires an npm ORG literally
+                                          # named "tfrc" — a scope is not
+                                          # claimed by first publish, it is
+                                          # granted with the org. See
+                                          # specs/002 tasks.md T025's
+                                          # 2026-08-31 correction.
   license: MIT                            # LICENSE at repo root
   private: false                          # all three, as of 1.2.0
   published_yet: false                    # NOTHING IS ON THE REGISTRY YET.
-                                          # Needs NPM_TOKEN + a v* tag.
+                                          # Needs the tfrc org created,
+                                          # NPM_TOKEN added, + a v* tag.
+  auth: NPM_TOKEN (long-lived secret)     # bootstrap only. Migrate to
+                                          # trusted publishing (OIDC) once
+                                          # first publish succeeds — see
+                                          # specs/002 tasks.md T028. Cannot
+                                          # be done before a package exists.
   pipeline: .github/workflows/publish.yml # tag-triggered, verifies first
   publish_order: [foundation, marketing, product]  # dialects depend on
                                           # an exact foundation version
@@ -55,7 +66,8 @@ consumer_verification:          # the half of governance that runs OUTSIDE
   tool: packages/foundation/bin/tfrc-verify.js   # bin name: tfrc-verify
   invoked_by_consumers_as: "npx tfrc-verify"
   self_test: scripts/test-verify-consumer.js     # runs in CI
-  fixtures: scripts/fixtures/consumer-*          # deliberately broken
+  fixtures: scripts/fixtures/consumer-*          # one per violation code;
+                                                 # most deliberately broken
   rules_enforced:
     - MIXED_DIALECT       # never both dialects        (Article VI)
     - RESERVED_TOKEN      # marketing using gain/loss  (Article V)
@@ -63,6 +75,8 @@ consumer_verification:          # the half of governance that runs OUTSIDE
     - RESERVED_HUE        # raw oklch in reserved band (Article V)
     - RAW_VALUE           # any raw color literal      (Article IV)
     - VERSION_PIN         # non-exact @tfrc/* dep      (specs/002 FR-002)
+    - NO_MANIFEST         # no package.json to read    (precondition)
+    - NO_DIALECT          # neither dialect present    (precondition)
   known_limit: RESERVED_HUE reads oklch hue only. A hex or rgb() literal
                inside a reserved band is caught merely as RAW_VALUE.
 
@@ -123,6 +137,10 @@ resolved_risks:
 known_gaps_for_v1.3:             # intentionally out of scope, not
                                  # forgotten. Don't silently re-decide these —
                                  # open an ADR first if you're tackling one.
+  - publishing authenticates with a long-lived NPM_TOKEN, not trusted
+    publishing (OIDC). Deliberate bootstrap ordering, not an oversight —
+    OIDC can only be configured on a package that already exists. Migrate
+    per specs/002 tasks.md T028 once the first publish (T026) succeeds.
   - nothing is published yet; FR-001 is implemented but unproven until a
     real consumer installs a real package (see CONSUMERS.md)
   - no icon set yet (foundation/src/icons/ does not exist)

@@ -48,7 +48,7 @@ published, versioned dependencies (`decisions/0007.md`). Nothing in
        │  persuade once     │       │  serve for years    │
        │  expressive        │       │  restrained         │
        │  desktop-first     │       │  mobile-first       │
-       │  ~14 components    │       │  ~40 components     │
+        │  ~14 components    │       │  ~23 components     │
        └─────────┬──────────┘       └──────────┬──────────┘
                  │                             │
                  │                  ┌──────────▼──────────┐

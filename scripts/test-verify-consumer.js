@@ -54,6 +54,25 @@ const cases = [
     expectCodes: ["VERSION_PIN"],
     why: "a range specifier lets a consumer's appearance change without a decision (FR-002)",
   },
+  {
+    fixture: "consumer-redefines-reserved",
+    expectExit: 1,
+    expectCodes: ["RESERVED_REDEFINE"],
+    why: "a product consumer may use the reserved tokens but never redefine them — otherwise 'green means up' silently becomes product-specific (decisions/0002.md)",
+  },
+  {
+    fixture: "consumer-no-dialect",
+    expectExit: 1,
+    expectCodes: ["NO_DIALECT"],
+    forbidCodes: ["NO_MANIFEST"],
+    why: "a repo with a manifest but no dialect must be told there was nothing to verify, not silently passed",
+  },
+  {
+    fixture: "consumer-no-manifest",
+    expectExit: 1,
+    expectCodes: ["NO_MANIFEST"],
+    why: "without a package.json the checker cannot know the dialect or the pinned version, and must say so rather than guess",
+  },
 ];
 
 let failures = 0;
