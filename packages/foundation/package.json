@@ -1,6 +1,6 @@
 {
   "name": "@tfrc/foundation",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "MIT",
   "description": "Color ramps, spacing base, reset, and the token contract. No user-facing components. Consumed by @tfrc/marketing and @tfrc/product — never the other way around.",
   "keywords": ["design-system", "design-tokens", "css", "tailwind"],

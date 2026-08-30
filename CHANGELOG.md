@@ -4,6 +4,26 @@ All notable changes to this repo. Each package also carries its own
 version in `package.json` and in `STATE.md`; this file is the human-
 readable narrative across all of them.
 
+## 1.2.3 — 2026-08-31
+
+No functional change to any package. This is a verification release for
+`specs/002-product-consumption-contract` T028 — the migration off the
+long-lived `NPM_TOKEN` to npm's trusted publishing (OIDC). All three
+packages bump to `1.0.2`, purely to force a real publish attempt: with
+`publish.yml`'s skip-if-already-published logic from `1.2.2`, re-tagging
+at `1.0.1` would just skip every step and prove nothing.
+
+Ahead of this tag: `.github/workflows/publish.yml`'s publish job now runs
+on Node `22.14.0` (trusted publishing requires npm >= 11.5.1, which Node
+20's bundled npm 10.x cannot provide), and a trusted publisher — GitHub
+Actions, `the-full-remote-company/design-system`, workflow `publish.yml`
+— was configured on npmjs.com for all three packages. `NODE_AUTH_TOKEN`
+is still wired as a fallback; npm's CLI tries OIDC first and only falls
+back to the token if trusted publishing isn't configured, so this release
+is the actual test of whether that configuration works. If it does, T028's
+remaining steps (disallow tokens per package, revoke and delete
+`NPM_TOKEN`) follow in a subsequent change once confirmed on the registry.
+
 ## 1.2.2 — 2026-08-31
 
 No package changed. This release fixes `.github/workflows/publish.yml`

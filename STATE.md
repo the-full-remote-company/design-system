@@ -10,26 +10,28 @@ same commit. This file drifting out of sync with reality is the single
 fastest way this repo becomes unmaintainable for the next agent.
 
 ```yaml
-repo_version: 1.2.2
+repo_version: 1.2.3
 last_updated: 2026-08-31
-status: All three packages are LIVE on the public npm registry at 1.0.1,
-        confirmed directly against the registry (not just CI's exit code)
-        — @tfrc/product@1.0.1's published description reads "~23
-        components", proving the corrected metadata actually landed.
-        T026 is fully done. The road there: v1.2.0 published all three at
-        1.0.0 on 2026-08-30 from a commit that predated a documentation
-        correction pass, permanently shipping a wrong description in
-        1.0.0 (npm won't let you edit published metadata). v1.2.1's
-        attempt to fix it got foundation and marketing to 1.0.1 but
-        stalled on @tfrc/product — its "Publishing access" setting on
-        npmjs.com rejected the automation token, and GitHub's "Re-run
-        failed jobs" re-runs the entire job from its first step, so every
-        retry re-hit foundation's now-live version before ever reaching
-        product again. v1.2.2 fixed publish.yml itself
-        (skip-if-already-published, per step), which is what actually
-        let product's 1.0.1 reach the registry. See decisions/0008.md,
-        0009.md, and specs/002-product-consumption-contract/tasks.md
-        T025–T028 for the full sequence.
+status: T026 is fully done — see resolved_risks and T025-T027 history in
+        specs/002 tasks.md for that sequence. Currently mid-T028: migrating
+        off the long-lived NPM_TOKEN to npm trusted publishing (OIDC).
+        Done so far: publish.yml's publish job bumped to Node 22.14.0
+        (required for OIDC), and a trusted publisher (GitHub Actions,
+        the-full-remote-company/design-system, workflow publish.yml)
+        configured for all three packages on npmjs.com. v1.2.3 bumps all
+        three packages to 1.0.2 purely to force a real publish attempt —
+        with 1.2.2's skip-if-already-published logic, retagging at an
+        already-live version would just skip every step and prove
+        nothing — and is the actual test of whether OIDC works.
+        NODE_AUTH_TOKEN is still wired as a fallback pending that
+        confirmation. If 1.0.2 lands, the remaining T028 steps (disallow
+        tokens per package, revoke the token, delete the secret) follow;
+        if it doesn't, NODE_AUTH_TOKEN's fallback should carry it through
+        regardless, which is itself the point of not stripping it out yet.
+        Verify against the registry after this tag runs, not just CI's
+        exit code — `npm view @tfrc/foundation versions` etc. See
+        decisions/0008.md, 0009.md, and
+        specs/002-product-consumption-contract/tasks.md T025–T028.
 
 spec_driven_development:
   adopted: true
@@ -43,14 +45,16 @@ spec_driven_development:
                              # `specify` CLI against this repo
 
 packages:                     # renamed 2026-08-08 by decisions/0008.md.
-  "@tfrc/foundation": 1.0.1   # confirmed live 2026-08-31
-  "@tfrc/marketing":  1.0.1   # confirmed live 2026-08-31
-  "@tfrc/product":    1.0.1   # confirmed live 2026-08-31 — description
-                              # verified to read "~23 components", so the
-                              # 1.2.1/1.2.2 fix actually took effect.
-                              # Old names were never published, so 1.0.0
-                              # under the new names was a first release, not
-                              # a successor. Nothing to migrate.
+  "@tfrc/foundation": 1.0.2   # target of v1.2.3 — verify against the
+  "@tfrc/marketing":  1.0.2   # registry before trusting this; this is the
+  "@tfrc/product":    1.0.2   # OIDC test release, and OIDC has not been
+                              # proven working yet as this was written.
+                              # 1.0.1 was confirmed live 2026-08-31 with
+                              # @tfrc/product's description reading "~23
+                              # components" — that part is solid regardless
+                              # of how 1.0.2 goes. Old names were never
+                              # published, so 1.0.0 under the new names was
+                              # a first release, not a successor.
 
 publishing:
   registry: https://registry.npmjs.org   # public. decisions/0009.md
@@ -64,11 +68,15 @@ publishing:
   private: false                          # all three, as of 1.2.0
   published_yet: true                     # confirmed on the registry,
                                           # all three at 1.0.1, 2026-08-31.
-  auth: NPM_TOKEN (long-lived secret)     # bootstrap only. Migrate to
-                                          # trusted publishing (OIDC) once
-                                          # first publish succeeds — see
-                                          # specs/002 tasks.md T028. Cannot
-                                          # be done before a package exists.
+                                          # v1.2.3 (1.0.2) is the pending
+                                          # OIDC test — verify before
+                                          # trusting past this line.
+  auth: NPM_TOKEN (fallback) + OIDC       # mid-migration (T028). Trusted
+                                          # publisher configured on npmjs.com
+                                          # for all three packages; v1.2.3
+                                          # is the first real test of it.
+                                          # NODE_AUTH_TOKEN stays wired as
+                                          # fallback until that's confirmed.
   pipeline: .github/workflows/publish.yml # tag-triggered, verifies first
   publish_order: [foundation, marketing, product]  # dialects depend on
                                           # an exact foundation version
