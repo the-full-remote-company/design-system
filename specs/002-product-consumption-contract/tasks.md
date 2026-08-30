@@ -92,9 +92,10 @@ enforceable comes before the thing that satisfies it.
 
 ## Not done — needs something this session cannot provide
 
-Listed so the next reader knows these are pending, not overlooked. T026 and
-T027 need a human credential/action this session cannot supply; T028 needs
-T026 to have already succeeded, so it cannot even be attempted yet.
+Listed so the next reader knows these are pending, not overlooked. T026 is
+now done. T027 needs a human action this session cannot supply; T028 needs
+a package version bumped and re-published via the token before it can be
+attempted, which is in progress as of the 1.2.1 release below.
 
 - [x] **T025** Verify the `@tfrc` npm scope is available. Checked
       2026-08-08 against the public registry: `@tfrc/foundation`,
@@ -109,17 +110,21 @@ T026 to have already succeeded, so it cannot even be attempted yet.
       unusable until an npm organization literally named `tfrc` is
       created — see T026. Re-verify availability immediately before
       creating it if significant time has passed.
-- [ ] **T026** Create the npm organization `tfrc` (required — the `@tfrc`
-      scope does not exist until this org does, regardless of package
-      availability; see T025's correction), enable 2FA on the account that
-      owns it, then add a granular access token with **Read and write**
-      on the `@tfrc` scope (not just "Organizations" access, which does
-      *not* grant publish rights) as the `NPM_TOKEN` repository secret.
-      Tag `v1.2.0` to perform the first real publish. Until this happens,
-      FR-001 is implemented but unproven: no consumer can install anything
-      yet. **Now the only remaining blocker** on a consumer repo actually
-      being able to install `@tfrc/marketing` or `@tfrc/product` — needs a
-      human with publish credentials, not further design work.
+- [x] **T026** Done 2026-08-30. The `tfrc` npm org was created, 2FA
+      enabled, a granular `NPM_TOKEN` scoped to `@tfrc` (Read and write,
+      under Packages and scopes — not Organizations access, which does not
+      grant publish rights) added as a repository secret, and `v1.2.0`
+      tagged and pushed. The `publish` GitHub Actions run for that tag
+      completed successfully; `@tfrc/foundation`, `@tfrc/marketing` and
+      `@tfrc/product` are all live at `1.0.0` on the public registry.
+      FR-001 is now proven, not just implemented — a consumer really can
+      `npm install @tfrc/product@1.0.0` today. **Caveat that produced the
+      1.2.1 patch release below:** the tag was cut from commit `2ea2ea9`,
+      before the documentation and fixture-coverage corrections in this
+      same file landed, so `@tfrc/product@1.0.0`'s published description
+      permanently carries the "~40 components" claim this session
+      corrected. See `CHANGELOG.md`'s `1.2.1` entry — a new consumer
+      should prefer `1.0.1` once it publishes.
 - [ ] **T027** Prove SC-001 the only way it can be proven — have someone
       who has not read this repo build a styled page from `CONSUMING.md`
       alone. Until then, SC-001 is asserted, not measured.
@@ -158,7 +163,7 @@ T026 to have already succeeded, so it cannot even be attempted yet.
 
 | Scenario | Status |
 |---|---|
-| S1 — marketing consumer builds a page from documented names only | `CONSUMING.md` provides the path; unproven until T026/T027 |
+| S1 — marketing consumer builds a page from documented names only | `CONSUMING.md` provides the path and packages are installable (T026 done); the page itself is unproven until T027 |
 | S2 — product consumer gets the product dialect + finance identity, not the corporate one | Covered by `CONSUMING.md` and enforced by `MIXED_DIALECT` |
 | S3 — pinned version unaffected by later changes | Enforced by `VERSION_PIN`; exact-version deps |
 | S4 — a release states whether it breaks | `CHANGELOG.md` convention + tag-triggered publish |
@@ -167,5 +172,8 @@ T026 to have already succeeded, so it cannot even be attempted yet.
 
 **SC-003 is fully met and demonstrated:** every rule in FR-006–FR-008 has a
 fixture that makes it fail, asserted in CI. **SC-001, SC-002 and SC-004 are
-implemented but not yet observed**, because there is still no consumer in
-existence — which is the honest state of this feature until T026 lands.
+implemented and now installable, but not yet observed** — packages exist
+on the registry as of T026, but no consumer repo exists yet to prove SC-001
+(`CONSUMING.md` alone gets someone to a styled page). That observation is
+T027, the only item in this file still blocked on something this session
+cannot do.

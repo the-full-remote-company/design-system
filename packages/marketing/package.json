@@ -1,6 +1,6 @@
 {
   "name": "@tfrc/marketing",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "description": "The marketing dialect of the visual language — corporate site, campaigns, careers. Expressive, desktop-first, ~14 components. Never imports from @tfrc/product.",
   "keywords": ["design-system", "design-tokens", "css", "tailwind", "marketing"],

@@ -10,15 +10,19 @@ same commit. This file drifting out of sync with reality is the single
 fastest way this repo becomes unmaintainable for the next agent.
 
 ```yaml
-repo_version: 1.2.0
+repo_version: 1.2.1
 last_updated: 2026-08-31
-status: Two dialect packages renamed, all three made publishable, and
-        consumer-side verification shipped. No token, palette, theme or
-        component changed. See decisions/0008.md and 0009.md. The "@tfrc"
-        scope was confirmed unclaimed on public npm 2026-08-08 — see
-        resolved_risks below. T026 (add NPM_TOKEN, tag, first publish) is
-        now the only remaining blocker on any consumer being able to
-        install anything.
+status: All three packages are LIVE on the public npm registry. T026
+        (create the tfrc npm org, add NPM_TOKEN, tag, publish) is done —
+        v1.2.0 published foundation/marketing/product at 1.0.0 on
+        2026-08-30. That tag was cut before a documentation/coverage
+        correction pass landed, so 1.0.0's published description of
+        @tfrc/product is permanently wrong (npm won't let you edit
+        published metadata); a 1.2.1 patch release fixes it going
+        forward — tag and push v1.2.1 to publish 1.0.1 of all three.
+        Consumers can install today; a new consumer should prefer 1.0.1
+        once it exists. See decisions/0008.md, 0009.md, and
+        specs/002-product-consumption-contract/tasks.md T025–T028.
 
 spec_driven_development:
   adopted: true
@@ -32,12 +36,20 @@ spec_driven_development:
                              # `specify` CLI against this repo
 
 packages:                     # renamed 2026-08-08 by decisions/0008.md.
-  "@tfrc/foundation": 1.0.0   # was, and remains, @tfrc/foundation
-  "@tfrc/marketing":  1.0.0   # WAS @tfrc/web      (packages/web/)
-  "@tfrc/product":    1.0.0   # WAS @tfrc/app      (packages/app/)
+  "@tfrc/foundation": 1.0.1   # was, and remains, @tfrc/foundation
+  "@tfrc/marketing":  1.0.1   # WAS @tfrc/web      (packages/web/)
+  "@tfrc/product":    1.0.1   # WAS @tfrc/app      (packages/app/)
                               # Old names were never published, so 1.0.0
-                              # under the new names is a first release, not
+                              # under the new names was a first release, not
                               # a successor. Nothing to migrate.
+                              # 1.0.1 (2026-08-31): patch, all three in
+                              # lockstep — only @tfrc/product's content
+                              # actually changed (corrected component
+                              # count). publish.yml has no per-package
+                              # skip-if-published logic, so all three bump
+                              # together or the next tag fails at the
+                              # foundation step before reaching product.
+                              # See CHANGELOG.md's 1.2.1 entry.
 
 publishing:
   registry: https://registry.npmjs.org   # public. decisions/0009.md
@@ -49,9 +61,11 @@ publishing:
                                           # 2026-08-31 correction.
   license: MIT                            # LICENSE at repo root
   private: false                          # all three, as of 1.2.0
-  published_yet: false                    # NOTHING IS ON THE REGISTRY YET.
-                                          # Needs the tfrc org created,
-                                          # NPM_TOKEN added, + a v* tag.
+  published_yet: true                     # v1.2.0 tag published all three
+                                          # at 1.0.0 on 2026-08-30. This
+                                          # repo is now at 1.2.1 with all
+                                          # three bumped to 1.0.1 — tag and
+                                          # push v1.2.1 to publish it.
   auth: NPM_TOKEN (long-lived secret)     # bootstrap only. Migrate to
                                           # trusted publishing (OIDC) once
                                           # first publish succeeds — see
@@ -124,25 +138,26 @@ open_risks:                      # unverified assumptions that would need a
     every use of it is printed and counted so erosion stays visible.
 
 resolved_risks:
-  - the "@tfrc" npm scope is unclaimed on the public registry, checked
-    2026-08-08: `@tfrc/foundation`, `@tfrc/marketing`, and `@tfrc/product`
-    all 404, and registry.npmjs.org/-/org/tfrc/package returns "Scope not
-    found" (i.e. nobody owns the org/scope itself, not just those three
-    package names). NOT the same as reserving it — the scope is claimed
-    automatically by whichever account first publishes to it, so this is
-    current as of the check and could change before T026 runs. specs/002
-    T025 is done; T026 (NPM_TOKEN + first publish) is the remaining
-    blocker and should happen soon, since availability isn't a hold.
+  - the "@tfrc" npm scope is real, owned by the company, and all three
+    packages are published on it. The npm org `tfrc` was created, an
+    `NPM_TOKEN` with publish rights was added, and `v1.2.0` was tagged and
+    published successfully on 2026-08-30 — specs/002 T026 is done. (Earlier
+    entries here said the scope would be "claimed automatically by
+    whichever account first publishes to it" — that was wrong for a scope
+    this specific; a scope is granted only by registering a user or org of
+    that exact name. Corrected in specs/002 tasks.md T025.)
 
 known_gaps_for_v1.3:             # intentionally out of scope, not
                                  # forgotten. Don't silently re-decide these —
                                  # open an ADR first if you're tackling one.
   - publishing authenticates with a long-lived NPM_TOKEN, not trusted
     publishing (OIDC). Deliberate bootstrap ordering, not an oversight —
-    OIDC can only be configured on a package that already exists. Migrate
-    per specs/002 tasks.md T028 once the first publish (T026) succeeds.
-  - nothing is published yet; FR-001 is implemented but unproven until a
-    real consumer installs a real package (see CONSUMERS.md)
+    OIDC can only be configured on a package that already exists, and now
+    does (T026 done). Migrate per specs/002 tasks.md T028.
+  - packages are published (T026 done, 2026-08-30) but FR-001 is still
+    unproven in the sense that matters: no real consumer has installed a
+    real package yet (see CONSUMERS.md, still "none yet"). T027 tracks
+    this specifically.
   - no icon set yet (foundation/src/icons/ does not exist)
   - apps/docs is a stub; live prototypes exist only as chat deliverables,
     not wired to consume the packages in this repo

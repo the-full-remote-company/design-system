@@ -43,7 +43,7 @@ for why, including the honest cost: a publish step now sits between
 ## Setting up a marketing consumer
 
 ```bash
-npm install @tfrc/marketing@1.0.0 --save-exact
+npm install @tfrc/marketing@1.0.1 --save-exact
 ```
 
 ```css
@@ -62,7 +62,7 @@ npm install @tfrc/marketing@1.0.0 --save-exact
 ## Setting up a product consumer
 
 ```bash
-npm install @tfrc/product@1.0.0 --save-exact
+npm install @tfrc/product@1.0.1 --save-exact
 ```
 
 ```css

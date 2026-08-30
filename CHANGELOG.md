@@ -4,6 +4,55 @@ All notable changes to this repo. Each package also carries its own
 version in `package.json` and in `STATE.md`; this file is the human-
 readable narrative across all of them.
 
+## 1.2.1 — 2026-08-31
+
+Patch release. `v1.2.0` was tagged and published successfully — all three
+packages are live at `1.0.0` — but the tag was cut from a commit that
+predated a documentation and test-coverage pass caught immediately
+afterward, so `@tfrc/product@1.0.0`'s published description permanently
+carries an inflated "~40 components" claim (npm does not allow editing
+published package metadata). This release corrects it going forward.
+
+All three packages bump to `1.0.1` together, even though only
+`@tfrc/product`'s content changed. `.github/workflows/publish.yml`
+publishes all three unconditionally on every tag; publishing only one
+would make `foundation`'s step fail on the *next* release (version already
+exists on the registry), which would stop the pipeline before it ever
+reached `product`. Bumping in lockstep avoids re-hitting this immediately.
+
+- **Fixed** the component count for `@tfrc/product`, which claimed "~40
+  components" while shipping 23 selectors across 8 families (button,
+  field, list/row, balance, amount, pill, segmented control, tabs).
+  Corrected in `packages/product/package.json`,
+  `packages/product/README.md`, `ARCHITECTURE.md` and the root `README.md`.
+  The marketing dialect's "~14" was checked against the same convention
+  and is accurate, so `@tfrc/marketing` did not need this fix — it bumps
+  only because the pipeline publishes in lockstep, not because anything in
+  it changed.
+- **Documented** `NO_MANIFEST` and `NO_DIALECT` in `CONSUMING.md`'s
+  violation table and `STATE.md`'s `rules_enforced`. Both codes have
+  always been emitted by `tfrc-verify` — `NO_DIALECT` is the first thing a
+  repo that has not yet adopted the system will see — but neither appeared
+  in the table a consumer is pointed at on failure.
+- **Added** fixtures for the two violation codes that had none, plus one
+  that was documented as enforced but never actually asserted:
+  `consumer-redefines-reserved` (`RESERVED_REDEFINE`), `consumer-no-dialect`
+  (`NO_DIALECT`) and `consumer-no-manifest` (`NO_MANIFEST`).
+  `scripts/test-verify-consumer.js` now covers all 8 codes the checker can
+  emit, which makes its closing claim — "tfrc-verify enforces every rule
+  it documents" — true rather than nearly true.
+- **Corrected** a wrong assumption recorded in
+  `specs/002-product-consumption-contract/tasks.md`: an npm scope is not
+  claimed by whoever publishes into it first, it is granted with a
+  registered user or organization of that exact name. `@tfrc` required the
+  npm organization `tfrc` to exist before anything could publish to it —
+  this was the actual missing first step, now corrected in T025/T026.
+- **Recorded** T028 in the same file: migrate off the long-lived
+  `NPM_TOKEN` used for this and the `v1.2.0` publish to npm's trusted
+  publishing (OIDC), now that packages exist on the registry and the
+  per-package configuration OIDC requires is possible. Not done in this
+  release.
+
 ## 1.2.0 — 2026-08-31
 
 Products can now be built. The two dialect packages were renamed to say
