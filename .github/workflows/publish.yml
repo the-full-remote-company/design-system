@@ -73,7 +73,13 @@ jobs:
           registry-url: "https://registry.npmjs.org"
       - name: Ensure npm supports trusted publishing (OIDC)
         run: |
-          npm install -g npm@latest
+          # Pinned, not @latest: npm 12.x requires Node >=22.22.2, which is
+          # newer than the 22.14.0 pinned above, and installing @latest
+          # failed with EBADENGINE on v1.2.5's attempt. npm 11.5.1 is the
+          # documented minimum for OIDC and its own engines field
+          # (^20.17.0 || >=22.9.0) is compatible with 22.14.0 — verified
+          # against the published package manifest before pinning here.
+          npm install -g npm@11.5.1
           echo "node: $(node --version)"
           echo "npm:  $(npm --version)"
       # Order matters: the two dialects depend on an exact foundation

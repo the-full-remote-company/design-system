@@ -10,28 +10,25 @@ same commit. This file drifting out of sync with reality is the single
 fastest way this repo becomes unmaintainable for the next agent.
 
 ```yaml
-repo_version: 1.2.5
+repo_version: 1.2.6
 last_updated: 2026-08-31
 status: T026 is fully done — see resolved_risks and T025-T027 history in
         specs/002 tasks.md. Mid-T028: migrating off the long-lived
-        NPM_TOKEN to npm trusted publishing (OIDC). v1.2.3 (1.0.2)
-        published successfully with a trusted publisher configured AND
-        NODE_AUTH_TOKEN still present as a fallback — genuinely ambiguous
-        evidence, since --provenance signs a Sigstore attestation using
-        GitHub's OIDC identity regardless of which credential actually
-        authenticated the registry write. The NPM_TOKEN GitHub secret was
-        then deleted entirely for v1.2.4, which failed immediately with
-        ENEEDAUTH — before any registry write was attempted, meaning OIDC
-        was never even tried. Root cause: Node 22.14.0 (set via
-        setup-node's node-version) almost certainly still bundles npm
-        10.x, which has no concept of OIDC at all; node-version controls
-        only the Node binary, not the npm CLI version, and this went
-        unverified until it failed. v1.2.5 adds an explicit
-        `npm install -g npm@latest` step plus a version-diagnostic log
-        line. NPM_TOKEN remains deleted — this is still the decisive,
-        no-fallback test, now with the actual prerequisite npm version.
-        Verify against the registry after this tag runs, not just CI's
-        exit code. See decisions/0008.md, 0009.md, and
+        NPM_TOKEN to npm trusted publishing (OIDC), NPM_TOKEN deleted since
+        v1.2.4. Two CI-only failures since, both fixed forward rather than
+        by restoring the token: v1.2.4 failed with ENEEDAUTH because Node
+        22.14.0 (set via setup-node's node-version, which controls only
+        the Node binary) bundles npm 10.x, predating OIDC entirely.
+        v1.2.5's fix — `npm install -g npm@latest` — itself failed with
+        EBADENGINE, because npm's current latest (12.0.2) requires Node
+        >=22.22.2, newer than what's pinned. v1.2.6 pins an exact
+        `npm@11.5.1` instead (checked its own engines field against
+        22.14.0 first) — the documented OIDC minimum, not a moving
+        target. Full narrative in CHANGELOG.md's 1.2.4-1.2.6 entries. No
+        package version bump since 1.0.2: 1.0.3 has never reached the
+        registry across three attempts, all CI/tooling failures before
+        any registry write. Verify against the registry after this tag
+        runs, not just CI's exit code. See decisions/0008.md, 0009.md, and
         specs/002-product-consumption-contract/tasks.md T025–T028.
 
 spec_driven_development:
@@ -46,18 +43,17 @@ spec_driven_development:
                              # `specify` CLI against this repo
 
 packages:                     # renamed 2026-08-08 by decisions/0008.md.
-  "@tfrc/foundation": 1.0.3   # target of v1.2.5 — verify against the
-  "@tfrc/marketing":  1.0.3   # registry before trusting this; v1.2.4's
-  "@tfrc/product":    1.0.3   # attempt at 1.0.3 failed with ENEEDAUTH
-                              # before any registry write (npm CLI version
-                              # gap, now fixed), so this is the same target
-                              # version retried, not a new one. 1.0.2
-                              # confirmed live 2026-08-31, but with the
-                              # token still present as a fallback, so it
-                              # didn't prove OIDC specifically. Old names
-                              # were never published, so 1.0.0 under the
-                              # new names was a first release, not a
-                              # successor.
+  "@tfrc/foundation": 1.0.3   # target of v1.2.6 — verify against the
+  "@tfrc/marketing":  1.0.3   # registry before trusting this. Three prior
+  "@tfrc/product":    1.0.3   # attempts at 1.0.3 (v1.2.4, v1.2.5) both
+                              # failed in CI tooling before any registry
+                              # write, so this is the same target retried
+                              # again, not a new one. 1.0.2 confirmed live
+                              # 2026-08-31, but with the token still
+                              # present as a fallback, so it didn't prove
+                              # OIDC specifically. Old names were never
+                              # published, so 1.0.0 under the new names
+                              # was a first release, not a successor.
 
 publishing:
   registry: https://registry.npmjs.org   # public. decisions/0009.md
@@ -71,29 +67,28 @@ publishing:
   private: false                          # all three, as of 1.2.0
   published_yet: true                     # confirmed on the registry,
                                           # all three at 1.0.2, 2026-08-31.
-                                          # v1.2.4's attempt at 1.0.3 failed
-                                          # with ENEEDAUTH (npm CLI version
-                                          # gap — see auth note below).
-                                          # v1.2.5 fixes the CLI version and
-                                          # retries the same 1.0.3 target —
-                                          # verify before trusting past
-                                          # this line.
+                                          # 1.0.3 has failed three times
+                                          # (v1.2.4 ENEEDAUTH, v1.2.5
+                                          # EBADENGINE), always in CI
+                                          # tooling before any registry
+                                          # write. v1.2.6 verify before
+                                          # trusting past this line.
   auth: OIDC (NPM_TOKEN secret deleted)   # mid-migration (T028). Trusted
                                           # publisher configured on npmjs.com
                                           # for all three packages.
-                                          # NPM_TOKEN was deleted ahead of
-                                          # v1.2.4 to force an unambiguous
-                                          # test, which instead surfaced
-                                          # that Node 22.14.0's bundled npm
-                                          # (10.x) predates OIDC support —
-                                          # setup-node's node-version input
-                                          # controls only the Node binary,
-                                          # not the bundled npm CLI version,
-                                          # which went unverified until
-                                          # this failure. v1.2.5 adds an
-                                          # explicit `npm install -g
-                                          # npm@latest` step before
-                                          # publishing. If v1.2.5 succeeds,
+                                          # NPM_TOKEN deleted ahead of
+                                          # v1.2.4. Two CI-tooling failures
+                                          # since (see CHANGELOG's 1.2.4-
+                                          # 1.2.6 entries for the full
+                                          # narrative): Node 22.14.0 bundles
+                                          # npm 10.x, which predates OIDC;
+                                          # v1.2.5's fix to `npm@latest`
+                                          # itself failed because latest
+                                          # npm (12.x) needs Node >=22.22.2.
+                                          # v1.2.6 pins npm@11.5.1 exactly —
+                                          # the documented OIDC minimum,
+                                          # checked against its own engines
+                                          # field first. If v1.2.6 succeeds,
                                           # OIDC is proven and the real
                                           # npm-side token (still valid,
                                           # separately from the deleted GH

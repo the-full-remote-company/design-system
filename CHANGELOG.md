@@ -4,6 +4,24 @@ All notable changes to this repo. Each package also carries its own
 version in `package.json` and in `STATE.md`; this file is the human-
 readable narrative across all of them.
 
+## 1.2.6 — 2026-08-31
+
+Fixes `.github/workflows/publish.yml` again, not any package. `1.2.5`'s
+`npm install -g npm@latest` itself failed with `EBADENGINE`: npm's current
+`latest` is `12.0.2`, which requires Node `^22.22.2` or later — newer than
+the `22.14.0` pinned in the same job. `@latest` is a moving target that
+had already outrun the Node version chosen to satisfy OIDC's *minimum*
+requirement; those are two different constraints that both need
+satisfying simultaneously, not one implying the other.
+
+- **Changed** the npm upgrade step to pin an exact version,
+  `npm@11.5.1` — the documented minimum for trusted publishing — rather
+  than `@latest`. Checked its own `engines` field
+  (`^20.17.0 || >=22.9.0`) against the published package manifest before
+  pinning, so this isn't another unverified assumption.
+- No package version bump: `1.0.3` still hasn't reached the registry
+  (confirmed against it directly), so this retries the same target again.
+
 ## 1.2.5 — 2026-08-31
 
 Fixes `.github/workflows/publish.yml` itself, not any package. `1.2.4`'s
