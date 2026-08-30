@@ -4,6 +4,28 @@ All notable changes to this repo. Each package also carries its own
 version in `package.json` and in `STATE.md`; this file is the human-
 readable narrative across all of them.
 
+## 1.2.4 — 2026-08-31
+
+No functional change to any package. Second and decisive verification
+release for T028. `1.2.3` proved a real publish succeeds with a trusted
+publisher configured *and* `NODE_AUTH_TOKEN` still present as a fallback —
+which is genuinely ambiguous evidence, since `--provenance` always signs a
+Sigstore attestation using GitHub's OIDC identity regardless of which
+credential actually authenticated the registry write, and nothing on
+npmjs.com's UI surfaced which path was taken either.
+
+The `NPM_TOKEN` GitHub repository secret has been deleted entirely ahead
+of this tag — not blanked, removed. If this release succeeds,
+`NODE_AUTH_TOKEN` resolves to an empty string with no fallback behind it
+at all, which makes a successful publish unambiguous proof that trusted
+publishing is doing the work. If it fails, the trusted publisher
+configuration has a real problem to debug, caught here rather than after
+permanently locking the registry down.
+
+All three packages bump to `1.0.3` for the same reason `1.2.3` bumped to
+`1.0.2`: skip-if-already-published logic means retagging at a live
+version proves nothing.
+
 ## 1.2.3 — 2026-08-31
 
 No functional change to any package. This is a verification release for

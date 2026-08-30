@@ -10,27 +10,24 @@ same commit. This file drifting out of sync with reality is the single
 fastest way this repo becomes unmaintainable for the next agent.
 
 ```yaml
-repo_version: 1.2.3
+repo_version: 1.2.4
 last_updated: 2026-08-31
 status: T026 is fully done — see resolved_risks and T025-T027 history in
-        specs/002 tasks.md for that sequence. Currently mid-T028: migrating
-        off the long-lived NPM_TOKEN to npm trusted publishing (OIDC).
-        Done so far: publish.yml's publish job bumped to Node 22.14.0
-        (required for OIDC), and a trusted publisher (GitHub Actions,
-        the-full-remote-company/design-system, workflow publish.yml)
-        configured for all three packages on npmjs.com. v1.2.3 bumps all
-        three packages to 1.0.2 purely to force a real publish attempt —
-        with 1.2.2's skip-if-already-published logic, retagging at an
-        already-live version would just skip every step and prove
-        nothing — and is the actual test of whether OIDC works.
-        NODE_AUTH_TOKEN is still wired as a fallback pending that
-        confirmation. If 1.0.2 lands, the remaining T028 steps (disallow
-        tokens per package, revoke the token, delete the secret) follow;
-        if it doesn't, NODE_AUTH_TOKEN's fallback should carry it through
-        regardless, which is itself the point of not stripping it out yet.
-        Verify against the registry after this tag runs, not just CI's
-        exit code — `npm view @tfrc/foundation versions` etc. See
-        decisions/0008.md, 0009.md, and
+        specs/002 tasks.md. Mid-T028: migrating off the long-lived
+        NPM_TOKEN to npm trusted publishing (OIDC). v1.2.3 (1.0.2)
+        published successfully with a trusted publisher configured AND
+        NODE_AUTH_TOKEN still present as a fallback — genuinely ambiguous
+        evidence, since --provenance signs a Sigstore attestation using
+        GitHub's OIDC identity regardless of which credential actually
+        authenticated the registry write, and npmjs.com's UI showed no
+        indication of which path was used either. The NPM_TOKEN GitHub
+        secret has now been deleted entirely (not blanked — removed), and
+        v1.2.4 (1.0.3) is the decisive test: if this publishes with no
+        token secret present at all, OIDC is proven unambiguously; if it
+        fails, the trusted publisher configuration has a real problem,
+        caught here rather than after permanently locking the registry
+        down. Verify against the registry after this tag runs, not just
+        CI's exit code. See decisions/0008.md, 0009.md, and
         specs/002-product-consumption-contract/tasks.md T025–T028.
 
 spec_driven_development:
@@ -45,16 +42,16 @@ spec_driven_development:
                              # `specify` CLI against this repo
 
 packages:                     # renamed 2026-08-08 by decisions/0008.md.
-  "@tfrc/foundation": 1.0.2   # target of v1.2.3 — verify against the
-  "@tfrc/marketing":  1.0.2   # registry before trusting this; this is the
-  "@tfrc/product":    1.0.2   # OIDC test release, and OIDC has not been
-                              # proven working yet as this was written.
-                              # 1.0.1 was confirmed live 2026-08-31 with
-                              # @tfrc/product's description reading "~23
-                              # components" — that part is solid regardless
-                              # of how 1.0.2 goes. Old names were never
-                              # published, so 1.0.0 under the new names was
-                              # a first release, not a successor.
+  "@tfrc/foundation": 1.0.3   # target of v1.2.4 — verify against the
+  "@tfrc/marketing":  1.0.3   # registry before trusting this; this is the
+  "@tfrc/product":    1.0.3   # decisive OIDC-only test (no token secret
+                              # exists at all as this was written). 1.0.2
+                              # confirmed live 2026-08-31, but with the
+                              # token still present as a fallback, so it
+                              # didn't prove OIDC specifically. Old names
+                              # were never published, so 1.0.0 under the
+                              # new names was a first release, not a
+                              # successor.
 
 publishing:
   registry: https://registry.npmjs.org   # public. decisions/0009.md
@@ -67,16 +64,26 @@ publishing:
   license: MIT                            # LICENSE at repo root
   private: false                          # all three, as of 1.2.0
   published_yet: true                     # confirmed on the registry,
-                                          # all three at 1.0.1, 2026-08-31.
-                                          # v1.2.3 (1.0.2) is the pending
-                                          # OIDC test — verify before
+                                          # all three at 1.0.2, 2026-08-31.
+                                          # v1.2.4 (1.0.3) is the decisive
+                                          # OIDC-only test — verify before
                                           # trusting past this line.
-  auth: NPM_TOKEN (fallback) + OIDC       # mid-migration (T028). Trusted
+  auth: OIDC (NPM_TOKEN secret deleted)   # mid-migration (T028). Trusted
                                           # publisher configured on npmjs.com
-                                          # for all three packages; v1.2.3
-                                          # is the first real test of it.
-                                          # NODE_AUTH_TOKEN stays wired as
-                                          # fallback until that's confirmed.
+                                          # for all three packages. The
+                                          # NPM_TOKEN GitHub secret was
+                                          # deleted ahead of v1.2.4 to force
+                                          # an unambiguous test — if that
+                                          # tag's publish succeeds, OIDC is
+                                          # proven and the real npm-side
+                                          # token still needs revoking
+                                          # separately (deleting the GH
+                                          # secret does not revoke it at
+                                          # the source). If it fails, a new
+                                          # token needs generating to
+                                          # restore the fallback while the
+                                          # trusted publisher config is
+                                          # debugged.
   pipeline: .github/workflows/publish.yml # tag-triggered, verifies first
   publish_order: [foundation, marketing, product]  # dialects depend on
                                           # an exact foundation version
