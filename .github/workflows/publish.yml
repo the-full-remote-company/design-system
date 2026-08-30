@@ -14,9 +14,13 @@ name: publish
 # Trusted publishing (OIDC) removes the need for NPM_TOKEN entirely, but it
 # can only be configured per-package on npmjs.com AFTER a package exists —
 # so token-based publishing has to happen once before OIDC can replace it.
-# See specs/002-product-consumption-contract/tasks.md T028 for the exact
-# migration steps once this workflow has published successfully at least
-# once.
+# T026 published all three at 1.0.1 on 2026-08-31; migrating to OIDC is now
+# in progress. See specs/002-product-consumption-contract/tasks.md T028
+# for the exact migration steps and current status. NODE_AUTH_TOKEN stays
+# wired below as a fallback until a release has been confirmed to succeed
+# via OIDC alone — npm's CLI tries OIDC first and only falls back to the
+# token if OIDC isn't configured, so leaving both in place is what makes
+# this step of the migration safe to attempt.
 
 on:
   push:
@@ -48,7 +52,11 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          # Trusted publishing (OIDC) requires npm >= 11.5.1, which ships
+          # with Node >= 22.14 — Node 20's bundled npm 10.x cannot do OIDC
+          # at all, silently falling back to NODE_AUTH_TOKEN instead. This
+          # bump is a hard prerequisite for T028, not a routine update.
+          node-version: "22.14.0"
           registry-url: "https://registry.npmjs.org"
       # Order matters: the two dialects depend on an exact foundation
       # version, so foundation must exist on the registry first.
