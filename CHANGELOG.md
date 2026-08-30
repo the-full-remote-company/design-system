@@ -4,6 +4,32 @@ All notable changes to this repo. Each package also carries its own
 version in `package.json` and in `STATE.md`; this file is the human-
 readable narrative across all of them.
 
+## 1.2.2 — 2026-08-31
+
+No package changed. This release fixes `.github/workflows/publish.yml`
+itself, so it could finish what `1.2.1` started.
+
+`1.2.1`'s publish stalled on `@tfrc/product`: a per-package "Publishing
+access" setting on npmjs.com rejected the automation token for `product`
+specifically, after `foundation` and `marketing` had already published
+successfully at `1.0.1`. Once that setting was corrected, the only way to
+retry was GitHub's "Re-run failed jobs" — which re-runs the entire
+`publish` job from its first step, not just the step that failed. Every
+retry therefore re-attempted `foundation`, which now correctly refused to
+publish over its own already-live `1.0.1`, and the job never reached
+`product` again. Three retries produced the same result.
+
+- **Fixed** each of the three publish steps to check the registry for its
+  own exact version first and skip with a message if it's already there,
+  instead of unconditionally attempting `npm publish`. This is what makes
+  a partial-failure retry actually recoverable: `foundation` and
+  `marketing` now skip cleanly, and the job reaches `product` regardless
+  of how many times the job is re-run.
+- This is a workflow-robustness fix, not a policy or content change — no
+  package version bumps with it. `@tfrc/product` still targets `1.0.1`,
+  which never successfully published; this release exists to let that
+  attempt actually reach the registry.
+
 ## 1.2.1 — 2026-08-31
 
 Patch release. `v1.2.0` was tagged and published successfully — all three

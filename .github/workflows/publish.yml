@@ -4,8 +4,8 @@ name: publish
 # `npm publish`. See decisions/0009.md.
 #
 # To release: bump the versions in packages/*/package.json, update
-# CHANGELOG.md and STATE.md in the same commit, then:
-#   git tag v1.2.0 && git push origin v1.2.0
+# CHANGELOG.md and STATE.md in the same commit, then tag and push, e.g.:
+#   git tag v1.2.2 && git push origin v1.2.2
 #
 # Requires an npm automation token in the repo secret NPM_TOKEN, with
 # publish rights to the @tfrc scope.
@@ -52,18 +52,49 @@ jobs:
           registry-url: "https://registry.npmjs.org"
       # Order matters: the two dialects depend on an exact foundation
       # version, so foundation must exist on the registry first.
+      #
+      # Each step checks whether its own version is already on the
+      # registry before publishing. GitHub Actions retries ("Re-run failed
+      # jobs") re-run the WHOLE job from its first step, not just the step
+      # that failed — so without this check, any partial failure after the
+      # first package succeeds (an interrupted publish, a per-package
+      # setting that needed fixing, a transient registry error) becomes
+      # unrecoverable without a version bump, because retrying re-fails on
+      # the package that already succeeded before it ever reaches the one
+      # that didn't. This happened publishing 1.0.1 of all three: a
+      # publishing-access setting blocked product, and every retry re-hit
+      # foundation's already-published version first. See
+      # specs/002-product-consumption-contract/tasks.md T026's note.
       - name: Publish @tfrc/foundation
-        run: npm publish --provenance --access public
         working-directory: packages/foundation
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          if npm view "@tfrc/foundation@$PKG_VERSION" version >/dev/null 2>&1; then
+            echo "@tfrc/foundation@$PKG_VERSION is already on the registry — skipping."
+          else
+            npm publish --provenance --access public
+          fi
       - name: Publish @tfrc/marketing
-        run: npm publish --provenance --access public
         working-directory: packages/marketing
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          if npm view "@tfrc/marketing@$PKG_VERSION" version >/dev/null 2>&1; then
+            echo "@tfrc/marketing@$PKG_VERSION is already on the registry — skipping."
+          else
+            npm publish --provenance --access public
+          fi
       - name: Publish @tfrc/product
-        run: npm publish --provenance --access public
         working-directory: packages/product
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          if npm view "@tfrc/product@$PKG_VERSION" version >/dev/null 2>&1; then
+            echo "@tfrc/product@$PKG_VERSION is already on the registry — skipping."
+          else
+            npm publish --provenance --access public
+          fi

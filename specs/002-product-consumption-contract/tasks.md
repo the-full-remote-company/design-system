@@ -93,9 +93,10 @@ enforceable comes before the thing that satisfies it.
 ## Not done — needs something this session cannot provide
 
 Listed so the next reader knows these are pending, not overlooked. T026 is
-now done. T027 needs a human action this session cannot supply; T028 needs
-a package version bumped and re-published via the token before it can be
-attempted, which is in progress as of the 1.2.1 release below.
+now done, though its own patch release (1.2.1) needed a follow-up (1.2.2)
+to actually complete — see the note under T026. T027 needs a human action
+this session cannot supply; T028 needs all three packages confirmed live
+at the same version before it can be attempted.
 
 - [x] **T025** Verify the `@tfrc` npm scope is available. Checked
       2026-08-08 against the public registry: `@tfrc/foundation`,
@@ -125,6 +126,23 @@ attempted, which is in progress as of the 1.2.1 release below.
       permanently carries the "~40 components" claim this session
       corrected. See `CHANGELOG.md`'s `1.2.1` entry — a new consumer
       should prefer `1.0.1` once it publishes.
+      **Second caveat, from actually running 1.2.1's publish:**
+      `foundation` and `marketing` reached `1.0.1` cleanly, but
+      `@tfrc/product`'s own npmjs.com "Publishing access" setting was on
+      "Require two-factor authentication and disallow tokens" — the
+      strict mode `T028` describes enabling *after* migrating to OIDC —
+      which rejected the automation token outright. Worse, once that
+      setting was corrected, GitHub's "Re-run failed jobs" re-runs the
+      *entire* `publish` job from its first step, so every retry re-hit
+      `foundation`'s now-already-published version before ever reaching
+      `product` again. `publish.yml` had no way to skip an
+      already-published version, so this was unrecoverable without either
+      a version bump or a workflow fix. `CHANGELOG.md`'s `1.2.2` entry
+      fixes the workflow itself (skip-if-already-published, per step) so
+      this can't recur. Lesson for T028: don't set "disallow tokens" on
+      any package before its trusted publisher is actually configured and
+      verified working, or the same lockout happens for OIDC instead of
+      recovering from it.
 - [ ] **T027** Prove SC-001 the only way it can be proven — have someone
       who has not read this repo build a styled page from `CONSUMING.md`
       alone. Until then, SC-001 is asserted, not measured.

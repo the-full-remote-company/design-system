@@ -10,7 +10,7 @@ same commit. This file drifting out of sync with reality is the single
 fastest way this repo becomes unmaintainable for the next agent.
 
 ```yaml
-repo_version: 1.2.1
+repo_version: 1.2.2
 last_updated: 2026-08-31
 status: All three packages are LIVE on the public npm registry. T026
         (create the tfrc npm org, add NPM_TOKEN, tag, publish) is done —
@@ -18,10 +18,17 @@ status: All three packages are LIVE on the public npm registry. T026
         2026-08-30. That tag was cut before a documentation/coverage
         correction pass landed, so 1.0.0's published description of
         @tfrc/product is permanently wrong (npm won't let you edit
-        published metadata); a 1.2.1 patch release fixes it going
-        forward — tag and push v1.2.1 to publish 1.0.1 of all three.
-        Consumers can install today; a new consumer should prefer 1.0.1
-        once it exists. See decisions/0008.md, 0009.md, and
+        published metadata). The 1.2.1 patch release that should have
+        fixed this only got foundation and marketing to 1.0.1 —
+        @tfrc/product's own "Publishing access" setting on npmjs.com
+        rejected the automation token, and every retry re-ran the whole
+        job from its first step, re-failing on foundation's now-live
+        version before ever reaching product again. 1.2.2 fixes
+        publish.yml itself (skip-if-already-published, per step) so the
+        job survives a partial-failure retry; it carries no package
+        version bump. Confirm @tfrc/product actually reached 1.0.1 on the
+        registry before trusting the packages table below. See
+        decisions/0008.md, 0009.md, and
         specs/002-product-consumption-contract/tasks.md T025–T028.
 
 spec_driven_development:
@@ -36,20 +43,21 @@ spec_driven_development:
                              # `specify` CLI against this repo
 
 packages:                     # renamed 2026-08-08 by decisions/0008.md.
-  "@tfrc/foundation": 1.0.1   # was, and remains, @tfrc/foundation
-  "@tfrc/marketing":  1.0.1   # WAS @tfrc/web      (packages/web/)
-  "@tfrc/product":    1.0.1   # WAS @tfrc/app      (packages/app/)
+                              # These are package.json versions (what THIS
+                              # release targets), not a guarantee of what's
+                              # live — @tfrc/product's 1.0.1 publish failed
+                              # twice before the pipeline itself was fixed.
+                              # Verify against the registry before trusting
+                              # this if it's been a while: `npm view
+                              # @tfrc/product versions`.
+  "@tfrc/foundation": 1.0.1   # confirmed live 2026-08-31
+  "@tfrc/marketing":  1.0.1   # confirmed live 2026-08-31
+  "@tfrc/product":    1.0.1   # target of v1.2.2's retry — confirm before
+                              # trusting; was still 1.0.0 as of the last
+                              # failed attempt. See CHANGELOG's 1.2.2 entry.
                               # Old names were never published, so 1.0.0
                               # under the new names was a first release, not
                               # a successor. Nothing to migrate.
-                              # 1.0.1 (2026-08-31): patch, all three in
-                              # lockstep — only @tfrc/product's content
-                              # actually changed (corrected component
-                              # count). publish.yml has no per-package
-                              # skip-if-published logic, so all three bump
-                              # together or the next tag fails at the
-                              # foundation step before reaching product.
-                              # See CHANGELOG.md's 1.2.1 entry.
 
 publishing:
   registry: https://registry.npmjs.org   # public. decisions/0009.md
@@ -62,10 +70,15 @@ publishing:
   license: MIT                            # LICENSE at repo root
   private: false                          # all three, as of 1.2.0
   published_yet: true                     # v1.2.0 tag published all three
-                                          # at 1.0.0 on 2026-08-30. This
-                                          # repo is now at 1.2.1 with all
-                                          # three bumped to 1.0.1 — tag and
-                                          # push v1.2.1 to publish it.
+                                          # at 1.0.0 on 2026-08-30.
+                                          # foundation and marketing reached
+                                          # 1.0.1 via v1.2.1; product's
+                                          # 1.0.1 publish failed twice
+                                          # (2FA/token policy, then a
+                                          # partial-failure retry that
+                                          # couldn't reach it) and needed
+                                          # v1.2.2 to fix publish.yml itself
+                                          # before it could complete.
   auth: NPM_TOKEN (long-lived secret)     # bootstrap only. Migrate to
                                           # trusted publishing (OIDC) once
                                           # first publish succeeds — see
