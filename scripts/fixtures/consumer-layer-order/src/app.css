@@ -1,0 +1,11 @@
+/* VIOLATION (decisions/0010.md): utilities declared before components/base,
+   which reinstates the exact unlayered specificity problem cascade layers
+   exist to solve — this consumer's utilities would lose the cascade
+   against @tfrc/product's reset and components instead of winning it. */
+@layer utilities, components, base;
+@import "@tfrc/product";
+
+.dashboard {
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+}

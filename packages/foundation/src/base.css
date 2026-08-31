@@ -4,24 +4,29 @@
    No semantic color tokens live here — see decisions/0004.md.
    ========================================================================== */
 
-*, *::before, *::after { box-sizing: border-box; }
+/* Reset and accessibility floor live in @layer base — see decisions/0010.md.
+   Custom-property :root blocks below stay unlayered on purpose; do not
+   move them in here. */
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
 
-html { -webkit-text-size-adjust: 100%; }
+  html { -webkit-text-size-adjust: 100%; }
 
-body { margin: 0; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; -webkit-font-smoothing: antialiased; }
 
-/* Both @tfrc/marketing and @tfrc/product must define --color-focus in their own
-   tokens.css for this to resolve — see CONTRACT.md. */
-:focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 2px;
-}
+  /* Both @tfrc/marketing and @tfrc/product must define --color-focus in their own
+     tokens.css for this to resolve — see CONTRACT.md. */
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
 
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 

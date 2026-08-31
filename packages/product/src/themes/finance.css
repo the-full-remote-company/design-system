@@ -23,19 +23,23 @@
 
 /* Finance-specific composition, not present in base @tfrc/product: a labeled
    accent strip for surfaces that need to say "this is the finance
-   product" inside a cross-product shell (e.g. a unified dashboard). */
-.theme-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  font-size: var(--step-xs);
-  font-weight: 600;
-  color: var(--theme-product-hue);
-}
-.theme-tag::before {
-  content: "";
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 9999px;
-  background: var(--theme-product-hue);
+   product" inside a cross-product shell (e.g. a unified dashboard).
+   Component rule, so it lives in @layer components — see decisions/0010.md.
+   The :root block above stays unlayered on purpose; do not move it in here. */
+@layer components {
+  .theme-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: var(--step-xs);
+    font-weight: 600;
+    color: var(--theme-product-hue);
+  }
+  .theme-tag::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background: var(--theme-product-hue);
+  }
 }

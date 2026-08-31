@@ -2,7 +2,13 @@
    @tfrc/foundation — entry point
    Imports the ACTIVE palette (see STATE.md), then the base layer.
    Consuming packages import this, then define their own tokens.css on top.
+   Declares the layer order first, per decisions/0010.md, so it is
+   registered even for a consumer that imports files individually. A
+   consumer should declare its own utility layer after these two:
+   @layer base, components, utilities; — see CONSUMING.md.
    ========================================================================== */
+
+@layer base, components;
 
 @import "./palettes/meridian.css";
 @import "./base.css";

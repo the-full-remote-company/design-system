@@ -1,6 +1,6 @@
 {
   "name": "@tfrc/product",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "license": "MIT",
   "description": "The product dialect of the visual language — application UI. Mobile-first, ~23 components, 44px touch floor. A deliberately small set (button, field, list/row, balance, amount, pill, segmented control, tabs) that products theme over and extend locally; they do not fork it. Never imports from @tfrc/marketing.",
   "keywords": ["design-system", "design-tokens", "css", "tailwind", "product-ui"],

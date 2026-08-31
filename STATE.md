@@ -10,8 +10,8 @@ same commit. This file drifting out of sync with reality is the single
 fastest way this repo becomes unmaintainable for the next agent.
 
 ```yaml
-repo_version: 1.2.7
-last_updated: 2026-08-31
+repo_version: 1.3.0
+last_updated: 2026-09-01
 status: All three packages are LIVE on npm, published via trusted
         publishing (OIDC) exclusively — proven, not assumed: v1.2.6
         published 1.0.3 with NO npm token existing anywhere (GitHub secret
@@ -29,6 +29,19 @@ status: All three packages are LIVE on npm, published via trusted
         build a page from CONSUMING.md alone. See decisions/0008.md and
         0009.md (dated addendum recording the OIDC migration).
 
+        v1.3.0 (2026-09-01) adds CSS cascade layers — see decisions/0010.md.
+        The reset (`@tfrc/foundation`'s base.css) now ships in @layer base
+        and every component file (@tfrc/marketing and @tfrc/product's
+        components.css, and the finance theme's .theme-tag) ships in
+        @layer components, so a consumer's own utility layer (Tailwind's
+        or hand-written) reliably wins the cascade instead of losing to
+        this system's unlayered CSS. Custom-property :root blocks stay
+        unlayered on purpose — see the ADR. A MINOR bump, not MAJOR,
+        because consumers: none_yet at the time of this change — no real
+        consumer's rendered output changes. tfrc-verify gained the
+        LAYER_ORDER rule for the one way a consumer can still get this
+        wrong (declaring their layer order backwards).
+
 spec_driven_development:
   adopted: true
   constitution_version: 1.0.1     # PATCH: identifier rename + Article II
@@ -41,14 +54,17 @@ spec_driven_development:
                              # `specify` CLI against this repo
 
 packages:                     # renamed 2026-08-08 by decisions/0008.md.
-  "@tfrc/foundation": 1.0.4   # target of v1.2.7, published via OIDC with
-  "@tfrc/marketing":  1.0.4   # Publishing access fully locked down
-  "@tfrc/product":    1.0.4   # (tokens disallowed at the registry, not
-                              # just absent from CI) — verify against the
-                              # registry before trusting this if it's been
-                              # a while. Old names were never published,
-                              # so 1.0.0 under the new names was a first
-                              # release, not a successor.
+  "@tfrc/foundation": 1.1.0   # v1.3.0: cascade layers (decisions/0010.md).
+  "@tfrc/marketing":  1.1.0   # MINOR — behavioral (unlayered -> layered
+  "@tfrc/product":    1.1.0   # CSS) but not breaking: consumers: none_yet.
+                              # Prior to this, all three were at 1.0.4,
+                              # published via OIDC with Publishing access
+                              # fully locked down (tokens disallowed at the
+                              # registry, not just absent from CI) — verify
+                              # against the registry before trusting this
+                              # if it's been a while. Old names were never
+                              # published, so 1.0.0 under the new names was
+                              # a first release, not a successor.
 
 publishing:
   registry: https://registry.npmjs.org   # public. decisions/0009.md
@@ -106,6 +122,7 @@ consumer_verification:          # the half of governance that runs OUTSIDE
     - VERSION_PIN         # non-exact @tfrc/* dep      (specs/002 FR-002)
     - NO_MANIFEST         # no package.json to read    (precondition)
     - NO_DIALECT          # neither dialect present    (precondition)
+    - LAYER_ORDER         # utilities before base/components (decisions/0010.md)
   known_limit: RESERVED_HUE reads oklch hue only. A hex or rgb() literal
                inside a reserved band is caught merely as RAW_VALUE.
 

@@ -14,9 +14,12 @@ contains a hex literal (Article IV), `consumer-reserved-color` uses
 `--color-gain` from the marketing dialect (Article V),
 `consumer-redefines-reserved` redefines it from the product dialect
 (Article V), and `consumer-mixed-dialect` imports both dialects
-(Article VI). Do not copy any of them as an example of correct usage —
-`CONSUMING.md` at the repo root is the correct example. `consumer-clean` is
-the only compliant one.
+(Article VI). `consumer-layer-order` declares its `@layer` order with
+`utilities` before `components`/`base`, which violates `decisions/0010.md`
+rather than a constitution article directly, but the same rule applies:
+do not copy any of them as an example of correct usage — `CONSUMING.md` at
+the repo root is the correct example. `consumer-clean` is the only
+compliant one.
 
 Two fixtures cover *preconditions* rather than rule violations:
 `consumer-no-dialect` has a manifest but has adopted neither dialect, and

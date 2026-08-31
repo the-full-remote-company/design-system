@@ -82,6 +82,54 @@ Your product does **not** author its own theme locally — a new theme is a
 change to this repo, so that two products can never drift into two
 incompatible versions of the same idea.
 
+## Cascade layers — how your overrides win
+
+This system's reset lives in `@layer base` and every component
+(`.btn`, `.field`, `.pill`, theme additions like `.theme-tag`) lives in
+`@layer components`. Custom properties (`--color-accent` and friends) are
+deliberately **not** layered — see `decisions/0010-cascade-layers-for-
+consumer-overrides.md` if you want the reasoning.
+
+This matters because of what it lets you do: declare your own utility
+layer *after* these two, and your utilities reliably win the cascade
+against this system's components — no `!important`, no specificity
+arms race with `.field input`.
+
+```css
+/* src/styles.css — your one entry point */
+@layer base, components, utilities;   /* declare the order FIRST */
+
+@import "@tfrc/product/themes/finance";
+
+@layer utilities {
+  .mt-4 { margin-top: var(--space-4); }
+}
+```
+
+**Using Tailwind v4?** It already generates `@layer theme, base, components,
+utilities;` for you. Add this system's two layer names into that same
+statement, in the same relative position, before your own `@tailwind`-style
+imports:
+
+```css
+/* src/styles.css */
+@import "tailwindcss";              /* Tailwind's own base/components/utilities */
+@layer base, components, tailwind-utilities;
+
+@import "@tfrc/product/themes/finance";
+
+@layer tailwind-utilities {
+  @tailwind utilities;
+}
+```
+
+The exact syntax depends on your Tailwind v4 setup (whether you're using
+`@tailwind` directives or the newer `@import "tailwindcss" layer(utilities)`
+form) — the requirement is only that whichever layer holds your utility
+classes is declared **after** `base` and `components` in the order
+statement. `npx tfrc-verify` (below) checks for the common mistake:
+writing the list backwards.
+
 ## Verify your repo, in your repo
 
 ```bash
@@ -108,6 +156,7 @@ It reports:
 | `RESERVED_HUE` | A raw `oklch()` value sits in the reserved gain/loss hue band | Pick a hue outside 130–170 and 5–40, and use a token. |
 | `RAW_VALUE` | A hex/`rgb()`/`oklch()` literal in your source | Use the token that means what you want. If none exists, open an issue on this repo — do not invent a local value. |
 | `VERSION_PIN` | A `@tfrc/*` dependency uses a range like `^1.0.0` | Pin it exactly, so your appearance never changes without a decision. |
+| `LAYER_ORDER` | An `@layer` statement lists `utilities` before `base`/`components` | Declare `@layer base, components, utilities;` — see "Cascade layers" above. |
 
 Exit codes: `0` compliant, `1` violations found, `2` usage error.
 
@@ -141,6 +190,10 @@ apply to your repo as much as to this one:
    named token.
 4. **Pin the version exactly.** A range means the design system can change
    your product's appearance while you sleep.
+5. **Declare `@layer base, components, utilities;`** (in that relative
+   order) before your own styles. Getting it backwards silently loses the
+   cascade to this system's reset and components instead of winning it —
+   see "Cascade layers" above and `decisions/0010.md`.
 
 ## Upgrading
 

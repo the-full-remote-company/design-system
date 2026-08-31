@@ -22,6 +22,15 @@
  * installed nothing but this package.
  *
  * Exit codes: 0 = compliant, 1 = violation(s) found, 2 = usage error.
+ *
+ * LAYER_ORDER (decisions/0010.md): this design system ships its reset and
+ * components in `@layer base` and `@layer components` respectively, so a
+ * consumer's own utility layer (Tailwind's or hand-written) reliably wins
+ * the cascade against them. That only holds if the consumer declares its
+ * own layer order with `components` (and `base`) before `utilities` — a
+ * consumer that writes the list backwards silently reinstates the exact
+ * unlayered specificity problem cascade layers exist to solve. See
+ * CONSUMING.md for the required declaration.
  */
 
 "use strict";
@@ -96,6 +105,7 @@ if (args.includes("--help") || args.includes("-h")) {
       "  2. reserved colors         — gain/loss tokens and hue bands mean market direction only",
       "  3. no raw values           — every color resolves through a named token",
       "  4. pinned version          — every @tfrc/* dependency is an exact version",
+      "  5. layer order             — an @layer statement never lists utilities before base/components",
       "",
       "Exit codes: 0 compliant, 1 violations found, 2 usage error.",
     ].join("\n")
@@ -185,6 +195,13 @@ const HEX = /#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{4}|[0-9a-fA-F]{3})(?!
 const FUNCTIONAL_COLOR = /\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\([^)\n]*\)?/;
 const OKLCH_LITERAL = /\boklch\(\s*([0-9.]+%?)\s+([0-9.]+%?)\s+([0-9.]+)/g;
 
+// A layer-order *statement* — e.g. `@layer base, components, utilities;` —
+// registers the relative cascade order of the names it lists, in one go.
+// It is distinct from `@layer name { ... }` (a block, which only adds one
+// layer) — only the statement form can list `utilities` before
+// `components`/`base` in a single line, so only that form is checked here.
+const LAYER_STATEMENT = /@layer\s+([a-zA-Z0-9_-]+(?:\s*,\s*[a-zA-Z0-9_-]+)+)\s*;/g;
+
 for (const file of files) {
   const rel = path.relative(ROOT, file) || path.basename(file);
   let content;
@@ -217,6 +234,26 @@ for (const file of files) {
         );
       } else if (uses) {
         RESERVED_TOKEN_USES.push({ rel, lineNo, token });
+      }
+    }
+
+    /* --- Check 5: layer order (decisions/0010.md) --- */
+    LAYER_STATEMENT.lastIndex = 0;
+    let layerMatch;
+    while ((layerMatch = LAYER_STATEMENT.exec(line))) {
+      const names = layerMatch[1].split(",").map((n) => n.trim());
+      const utilitiesIdx = names.indexOf("utilities");
+      if (utilitiesIdx === -1) continue;
+      const laterRequired = ["base", "components"].filter(
+        (required) => names.includes(required) && names.indexOf(required) > utilitiesIdx
+      );
+      if (laterRequired.length) {
+        violation(
+          "LAYER_ORDER",
+          rel,
+          lineNo,
+          `@layer statement lists "utilities" before "${laterRequired.join('"/"')}" — this design system's reset and components live in @layer base/components and rely on a consumer's utility layer coming AFTER both. Declare "@layer base, components, utilities;" instead. See CONSUMING.md.`
+        );
       }
     }
 
@@ -348,4 +385,4 @@ if (violations.length) {
   process.exit(1);
 }
 
-console.log("✓ Consumer is compliant: one dialect, pinned version, no raw values, reserved colors respected.");
+console.log("✓ Consumer is compliant: one dialect, pinned version, no raw values, reserved colors respected, layer order correct.");

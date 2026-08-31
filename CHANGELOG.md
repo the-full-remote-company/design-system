@@ -4,6 +4,47 @@ All notable changes to this repo. Each package also carries its own
 version in `package.json` and in `STATE.md`; this file is the human-
 readable narrative across all of them.
 
+## 1.3.0 — 2026-09-01
+
+Adds CSS cascade layers across all three packages —
+`decisions/0010-cascade-layers-for-consumer-overrides.md`. Without this,
+an unlayered design-system stylesheet beats an unlayered consumer utility
+of equal or lower specificity regardless of import order, which made
+overriding `.btn--primary` or `.field input` from a Tailwind consumer
+unreliable or, for `.field input`, effectively impossible without
+`!important`.
+
+- **Changed** `packages/foundation/src/base.css`: the reset, `:focus-
+  visible`, and reduced-motion block now ship inside `@layer base`. Both
+  `:root` custom-property blocks stay unlayered on purpose — layering
+  them would let any unlayered `:root` in a consumer's own CSS silently
+  win over this system's token values.
+- **Changed** `packages/marketing/src/components.css` and
+  `packages/product/src/components.css`: every component rule now ships
+  inside `@layer components`.
+- **Changed** `packages/product/src/themes/finance.css`: `.theme-tag` now
+  ships inside `@layer components`; its `:root` block (the theme's hue
+  identity) stays unlayered, same reasoning as base.css.
+- **Changed** every package's `src/index.css`: now opens with
+  `@layer base, components;` as its first line, so the layer order is
+  registered even for a consumer that imports one file directly instead
+  of the package entry point.
+- **Added** the `LAYER_ORDER` rule to `tfrc-verify` (`packages/
+  foundation/bin/tfrc-verify.js`): flags an `@layer` statement in a
+  consumer's own source that lists `utilities` before `base`/`components`,
+  which would silently reinstate the exact problem this release fixes.
+  Covered by a new fixture, `scripts/fixtures/consumer-layer-order/`, and
+  registered in `scripts/test-verify-consumer.js`.
+- **Documented** in `CONSUMING.md`: a new "Cascade layers" section with
+  the required `@layer base, components, utilities;` declaration and a
+  worked Tailwind v4 example.
+- **Behavioral, not breaking.** This changes which rule wins in the rare
+  case a consumer's unlayered override happened to rely on this system's
+  previously-unlayered CSS beating it. `STATE.md` records `consumers:
+  none_yet` as of this release, which is why it ships as MINOR (1.1.0 for
+  all three packages) rather than MAJOR — there is no real consumer's
+  rendered output that changes.
+
 ## 1.2.7 — 2026-08-31
 
 Closes out `specs/002-product-consumption-contract` T028. `1.2.6` proved

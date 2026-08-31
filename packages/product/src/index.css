@@ -4,7 +4,13 @@
    components. A product theme (see src/themes/) imports THIS file first,
    then layers its own overrides on top. Never import anything from
    @tfrc/marketing — see AGENTS.md rule 3 and scripts/lint-boundaries.js.
+   Declares the layer order first, per decisions/0010.md, so it is
+   registered even for a consumer that imports files individually. A
+   consumer should declare its own utility layer after these two:
+   @layer base, components, utilities; — see CONSUMING.md.
    ========================================================================== */
+
+@layer base, components;
 
 @import "@tfrc/foundation";
 @import "./tokens.css";

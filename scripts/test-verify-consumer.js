@@ -27,7 +27,7 @@ const cases = [
     fixture: "consumer-clean",
     expectExit: 0,
     expectCodes: [],
-    forbidCodes: ["RAW_VALUE", "RESERVED_TOKEN", "RESERVED_HUE", "MIXED_DIALECT", "VERSION_PIN", "NO_DIALECT"],
+    forbidCodes: ["RAW_VALUE", "RESERVED_TOKEN", "RESERVED_HUE", "MIXED_DIALECT", "VERSION_PIN", "NO_DIALECT", "LAYER_ORDER"],
     why: "a compliant product consumer must pass, including its legitimate use of gain/loss for market direction",
   },
   {
@@ -72,6 +72,12 @@ const cases = [
     expectExit: 1,
     expectCodes: ["NO_MANIFEST"],
     why: "without a package.json the checker cannot know the dialect or the pinned version, and must say so rather than guess",
+  },
+  {
+    fixture: "consumer-layer-order",
+    expectExit: 1,
+    expectCodes: ["LAYER_ORDER"],
+    why: "a consumer that declares its utility layer before base/components silently loses the cascade to this system's reset and component styles instead of winning it (decisions/0010.md)",
   },
 ];
 

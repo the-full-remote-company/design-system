@@ -5,6 +5,8 @@
    and decisions/0001.md's comparison table.
    ========================================================================== */
 
+@layer components {
+
 body { font-family: var(--font-ui); }
 h1, h2, h3 { font-family: var(--font-display); font-weight: 800; margin: 0; letter-spacing: -0.028em; }
 
@@ -135,3 +137,4 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 800; margin: 0; lett
   transition: color var(--duration-fast) var(--ease-quint);
 }
 .tabs button[aria-pressed="true"] { color: var(--color-accent); }
+}

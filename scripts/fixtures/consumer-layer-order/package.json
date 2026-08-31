@@ -1,0 +1,8 @@
+{
+  "name": "fixture-consumer-layer-order",
+  "private": true,
+  "version": "0.0.0",
+  "dependencies": {
+    "@tfrc/product": "1.0.0"
+  }
+}
