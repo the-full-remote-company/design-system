@@ -77,8 +77,8 @@ publishing:
   license: MIT                            # LICENSE at repo root
   private: false                          # all three, as of 1.2.0
   published_yet: true                     # confirmed on the registry,
-                                          # all three at 1.0.4 via OIDC,
-                                          # 2026-08-31.
+                                          # all three at 1.1.0 via OIDC,
+                                          # 2026-09-01 (v1.3.0 tag).
   auth: OIDC only (trusted publishing)    # T028 complete. No NPM_TOKEN
                                           # exists on GitHub OR npmjs.com —
                                           # both revoked. Each package's
